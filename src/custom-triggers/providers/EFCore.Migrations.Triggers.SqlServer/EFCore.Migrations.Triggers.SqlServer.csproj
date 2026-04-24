@@ -1,0 +1,43 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFrameworks>net5.0;net6.0;net7.0;net8.0;net9.0;net10.0;</TargetFrameworks>
+        <PackageId>EFCore.Migrations.Triggers.SqlServer</PackageId>
+        <Title>Triggers.SqlServer</Title>
+        <Version>1.0.3-preview</Version>
+        <Authors>AndreqGav</Authors>
+        <Product>EFCore.Migrations.Toolkit</Product>
+        <Description>Managing the creation of triggers in the database sqlServer through the EF migration mechanism.</Description>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageTags>entity framework core; entity-framework-core; ef core; ef-core; toolkits; ef-triggers; triggers; sql server</PackageTags>
+        <RepositoryUrl>https://github.com/AndreqGav/EFCore.Migrations.Toolkit</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <Copyright>Copyright (c) Андрей Гаврилов 2026</Copyright>
+        <PackageReleaseNotes>Creating Insert, Update, and Delete Triggers via DbContext</PackageReleaseNotes>
+    </PropertyGroup>
+
+    <ItemGroup Condition="'$(TargetFramework)' == 'net5.0'">
+        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.0" />
+    </ItemGroup>
+    <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
+        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.0" />
+    </ItemGroup>
+    <ItemGroup Condition="'$(TargetFramework)' == 'net7.0'">
+        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.0" />
+    </ItemGroup>
+    <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
+        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.0" />
+    </ItemGroup>
+    <ItemGroup Condition="'$(TargetFramework)' == 'net9.0'">
+        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.0" />
+    </ItemGroup>
+    <ItemGroup Condition="'$(TargetFramework)' == 'net10.0'">
+        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\EFCore.Migrations.Triggers\EFCore.Migrations.Triggers.csproj" />
+        <ProjectReference Include="..\..\..\abstractions\EFCore.Migrations.Abstractions\EFCore.Migrations.Abstractions.csproj" />
+    </ItemGroup>
+
+</Project>

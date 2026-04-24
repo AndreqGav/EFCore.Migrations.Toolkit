@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFrameworks>net5.0;net6.0;net7.0;net8.0;net9.0;net10.0</TargetFrameworks>
+        <PackageId>EFCore.Migrations.Abstractions</PackageId>
+        <Title>Abstractions</Title>
+        <Version>1.0.3-preview</Version>
+        <Authors>AndreqGav</Authors>
+        <Product>EFCore.Migrations.Toolkit</Product>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <RepositoryUrl>https://github.com/AndreqGav/EFCore.Migrations.Toolkit</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <Copyright>Copyright (c) Андрей Гаврилов 2026</Copyright>
+    </PropertyGroup>
+
+    <ItemGroup Condition="'$(TargetFramework)' == 'net5.0'">
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="5.0.0" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="6.0.0"/>
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(TargetFramework)' == 'net7.0'">
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="7.0.0"/>
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="8.0.0"/>
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(TargetFramework)' == 'net9.0'">
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.0"/>
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(TargetFramework)' == 'net10.0'">
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.0"/>
+    </ItemGroup>
+</Project>

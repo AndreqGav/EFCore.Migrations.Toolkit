@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFrameworks>net5.0;net6.0;net7.0;net8.0;net9.0;net10.0;</TargetFrameworks>
+        <PackageId>EFCore.Migrations.Triggers</PackageId>
+        <Title>Triggers</Title>
+        <Version>1.0.3-preview</Version>
+        <Authors>AndreqGav</Authors>
+        <Product>EFCore.Migrations.Toolkit</Product>
+        <Description>Managing the creation of triggers in the database via the EF migrations.</Description>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageTags>ef; ef core; ef toolkits; ef customsql; ef triggers; custom triggers</PackageTags>
+        <RepositoryUrl>https://github.com/AndreqGav/EFCore.Migrations.Toolkit</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <Copyright>Copyright (c) Андрей Гаврилов 2026</Copyright>
+        <PackageReleaseNotes>Creating Insert, Update, and Delete Triggers via DbContext</PackageReleaseNotes>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\custom-sql\EFCore.Migrations.CustomSql\EFCore.Migrations.CustomSql.csproj" />
+        <ProjectReference Include="..\..\abstractions\EFCore.Migrations.Abstractions\EFCore.Migrations.Abstractions.csproj" />
+    </ItemGroup>
+
+</Project>

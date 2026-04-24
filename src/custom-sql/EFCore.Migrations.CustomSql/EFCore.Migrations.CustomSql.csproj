@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFrameworks>net5.0;net6.0;net7.0;net8.0;net9.0;net10.0;</TargetFrameworks>
+        <PackageId>EFCore.Migrations.CustomSql</PackageId>
+        <Title>CustomSql</Title>
+        <Version>1.0.3-preview</Version>
+        <Authors>AndreqGav</Authors>
+        <Product>EFCore.Migrations.Toolkit</Product>
+        <Description>Managing custom SQL via EF migration engine.</Description>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageTags>entity framework core; entity-framework-core; ef core; ef-core; toolkits; customsql; custom sql; custom-sql</PackageTags>
+        <RepositoryUrl>https://github.com/AndreqGav/EFCore.Migrations.Toolkit</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <Copyright>Copyright (c) Андрей Гаврилов 2026</Copyright>
+        <PackageReleaseNotes>Adding Custom SQL via DbContext Model Configuration</PackageReleaseNotes>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\abstractions\EFCore.Migrations.Abstractions\EFCore.Migrations.Abstractions.csproj" />
+    </ItemGroup>
+
+</Project>
