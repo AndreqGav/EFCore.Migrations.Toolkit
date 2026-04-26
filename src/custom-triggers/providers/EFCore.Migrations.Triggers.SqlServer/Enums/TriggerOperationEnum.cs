@@ -1,19 +1,18 @@
-namespace EFCore.Migrations.Triggers.SqlServer.Enums
+namespace EFCore.Migrations.Triggers.SqlServer.Enums;
+
+public enum TriggerOperationEnum
 {
-    public enum TriggerOperationEnum
-    {
-        Insert = 1,
+    Insert = 1,
 
-        Update = 2,
+    Update = 2,
 
-        Delete = 3,
+    Delete = 3,
 
-        InsertOrUpdate = 4,
+    InsertOrUpdate = 4,
 
-        InsertOrDelete = 5,
+    InsertOrDelete = 5,
 
-        UpdateOrDelete = 6,
+    UpdateOrDelete = 6,
 
-        InsertOrUpdateOrDelete = 7,
-    }
+    InsertOrUpdateOrDelete = 7,
 }

@@ -4,43 +4,44 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata.Conventions.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace EFCore.Migrations.Triggers.Abstractions
+namespace EFCore.Migrations.Triggers.Abstractions;
+
+public abstract class TriggerSqlExtension : IDbContextOptionsExtension
 {
-    public abstract class TriggerSqlExtension : IDbContextOptionsExtension
+    protected TriggerSqlExtension()
     {
-        protected TriggerSqlExtension()
-        {
-            Info = new TriggerExtensionInfo(this);
-        }
-
-        public virtual void ApplyServices(IServiceCollection services)
-        {
-            new EntityFrameworkServicesBuilder(services)
-                .TryAdd<IConventionSetPlugin, TriggerSqlSetPlugin>();
-        }
-
-        public virtual void Validate(IDbContextOptions options)
-        {
-        }
-
-        public DbContextOptionsExtensionInfo Info { get; }
+        Info = new TriggerExtensionInfo(this);
     }
 
-    public class TriggerExtensionInfo : DbContextOptionsExtensionInfo
+    public virtual void ApplyServices(IServiceCollection services)
     {
-        public TriggerExtensionInfo(IDbContextOptionsExtension extension) : base(extension)
-        {
-        }
-
-        public override long GetServiceProviderHashCode() => 0;
-
-        public override void PopulateDebugInfo(IDictionary<string, string> debugInfo)
-        {
-            debugInfo["TriggerExtension"] = "1";
-        }
-
-        public override bool IsDatabaseProvider => false;
-
-        public override string LogFragment => "TriggerExtension";
+        new EntityFrameworkServicesBuilder(services)
+            .TryAdd<IConventionSetPlugin, TriggerSqlSetPlugin>();
     }
+
+    public virtual void Validate(IDbContextOptions options)
+    {
+    }
+
+    public DbContextOptionsExtensionInfo Info { get; }
+}
+
+public class TriggerExtensionInfo : DbContextOptionsExtensionInfo
+{
+    public TriggerExtensionInfo(IDbContextOptionsExtension extension) : base(extension)
+    {
+    }
+
+    public override bool ShouldUseSameServiceProvider(DbContextOptionsExtensionInfo other) => other is TriggerExtensionInfo;
+
+    public override int GetServiceProviderHashCode() => 0;
+
+    public override void PopulateDebugInfo(IDictionary<string, string> debugInfo)
+    {
+        debugInfo["TriggerExtension"] = "1";
+    }
+
+    public override bool IsDatabaseProvider => false;
+
+    public override string LogFragment => "TriggerExtension";
 }

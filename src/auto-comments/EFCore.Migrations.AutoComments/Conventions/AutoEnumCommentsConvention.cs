@@ -5,64 +5,62 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 
-namespace EFCore.Migrations.AutoComments.Conventions
+namespace EFCore.Migrations.AutoComments.Conventions;
+
+/// <summary>
+/// Добавление аннотаций о том, что требуется дополнить комментарий к Enum с перечислением его значений.
+/// </summary>
+internal class AutoCommentEnumDescriptionConvention : IModelFinalizingConvention
 {
-    /// <summary>
-    /// Добавление аннотаций о том, что требуется дополнить комментарий к Enum с перечислением его значений.
-    /// </summary>
-    internal class AutoCommentEnumDescriptionConvention : IModelFinalizingConvention
+    private readonly bool _allEnumsHasAutoCommentDescription;
+
+    public const string Name = "AutoCommentEnumDescription";
+
+    public AutoCommentEnumDescriptionConvention(bool allEnumsHasAutoCommentDescription)
     {
-        private readonly bool _allEnumsHasAutoCommentDescription;
+        _allEnumsHasAutoCommentDescription = allEnumsHasAutoCommentDescription;
+    }
 
-        public const string Name = "AutoCommentEnumDescription";
-
-        public AutoCommentEnumDescriptionConvention(bool allEnumsHasAutoCommentDescription)
+    public void ProcessModelFinalizing(IConventionModelBuilder modelBuilder, IConventionContext<IConventionModelBuilder> context)
+    {
+        foreach (var entityType in modelBuilder.Metadata.GetEntityTypes())
         {
-            _allEnumsHasAutoCommentDescription = allEnumsHasAutoCommentDescription;
-        }
-
-        public void ProcessModelFinalizing(IConventionModelBuilder modelBuilder,
-            IConventionContext<IConventionModelBuilder> context)
-        {
-            foreach (var entityType in modelBuilder.Metadata.GetEntityTypes())
+            foreach (var property in entityType.GetProperties())
             {
-                foreach (var property in entityType.GetProperties())
-                {
-                    TrySetAutoCommentEnumDescriptionAnnotation(property);
-                }
+                TrySetAutoCommentEnumDescriptionAnnotation(property);
             }
         }
+    }
 
-        private void TrySetAutoCommentEnumDescriptionAnnotation(IConventionProperty property)
+    private void TrySetAutoCommentEnumDescriptionAnnotation(IConventionProperty property)
+    {
+        var memberInfo = property.PropertyInfo;
+        if (memberInfo == null)
         {
-            var memberInfo = property.PropertyInfo;
-            if (memberInfo == null)
+            return;
+        }
+
+        if (_allEnumsHasAutoCommentDescription)
+        {
+            var propType = property.PropertyInfo?.PropertyType;
+
+            if (propType?.IsEnum == true)
             {
-                return;
-            }
+                var ignoreAutoEnumComment = Attribute.GetCustomAttribute(memberInfo, typeof(IgnoreAutoCommentEnumDescriptionAttribute));
 
-            if (_allEnumsHasAutoCommentDescription)
-            {
-                var propType = property.PropertyInfo?.PropertyType;
-
-                if (propType?.IsEnum == true)
-                {
-                    var ignoreAutoEnumComment = Attribute.GetCustomAttribute(memberInfo, typeof(IgnoreAutoCommentEnumDescriptionAttribute));
-
-                    if (ignoreAutoEnumComment is null)
-                    {
-                        property.Builder.AddEnumDescriptionComment();
-                    }
-                }
-            }
-            else
-            {
-                var autoEnumComment = Attribute.GetCustomAttribute(memberInfo, typeof(AutoCommentEnumDescriptionAttribute));
-
-                if (autoEnumComment is not null)
+                if (ignoreAutoEnumComment is null)
                 {
                     property.Builder.AddEnumDescriptionComment();
                 }
+            }
+        }
+        else
+        {
+            var autoEnumComment = Attribute.GetCustomAttribute(memberInfo, typeof(AutoCommentEnumDescriptionAttribute));
+
+            if (autoEnumComment is not null)
+            {
+                property.Builder.AddEnumDescriptionComment();
             }
         }
     }

@@ -9,84 +9,83 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 
 // ReSharper disable once CheckNamespace
-namespace EFCore.Migrations.Toolkit
+namespace EFCore.Migrations.Toolkit;
+
+public static class DependencyInjection
 {
-    public static class DependencyInjection
+    public static TBuilder UseAutoComments<TBuilder>([NotNull] this TBuilder optionsBuilder, params string[] xmlFiles)
+        where TBuilder : DbContextOptionsBuilder
     {
-        public static TBuilder UseAutoComments<TBuilder>([NotNull] this TBuilder optionsBuilder, params string[] xmlFiles)
-            where TBuilder : DbContextOptionsBuilder
-        {
-            return optionsBuilder.UseAutoComments(o => o.FromXmlFiles(xmlFiles));
-        }
-
-        public static TBuilder UseAutoComments<TBuilder>([NotNull] this TBuilder optionsBuilder, Action<AutoCommentOptions> configure)
-            where TBuilder : DbContextOptionsBuilder
-        {
-            var options = new AutoCommentOptions();
-            configure.Invoke(options);
-
-            var extension = new AutoCommentsOptionsExtension(options);
-
-            ((IDbContextOptionsBuilderInfrastructure)optionsBuilder).AddOrUpdateExtension(extension);
-
-            return optionsBuilder;
-        }
+        return optionsBuilder.UseAutoComments(o => o.FromXmlFiles(xmlFiles));
     }
 
-    public class AutoCommentOptions
+    public static TBuilder UseAutoComments<TBuilder>([NotNull] this TBuilder optionsBuilder, Action<AutoCommentOptions> configure)
+        where TBuilder : DbContextOptionsBuilder
     {
-        internal string[] XmlFiles { get; set; } = Array.Empty<string>();
+        var options = new AutoCommentOptions();
+        configure.Invoke(options);
 
-        internal bool AutoCommentEnumDescriptions { get; set; }
+        var extension = new AutoCommentsOptionsExtension(options);
+
+        ((IDbContextOptionsBuilderInfrastructure)optionsBuilder).AddOrUpdateExtension(extension);
+
+        return optionsBuilder;
+    }
+}
+
+public class AutoCommentOptions
+{
+    internal string[] XmlFiles { get; set; } = Array.Empty<string>();
+
+    internal bool AutoCommentEnumDescriptions { get; set; }
+}
+
+public static class AutoCommentOptionsExtensions
+{
+    public static AutoCommentOptions FromXmlFiles(this AutoCommentOptions options, params string[] xmlFiles)
+    {
+        options.XmlFiles = GetXmlFiles(xmlFiles).ToArray();
+
+        return options;
     }
 
-    public static class AutoCommentOptionsExtensions
+    public static AutoCommentOptions AddEnumDescriptions(this AutoCommentOptions options)
     {
-        public static AutoCommentOptions FromXmlFiles(this AutoCommentOptions options, params string[] xmlFiles)
+        options.AutoCommentEnumDescriptions = true;
+
+        return options;
+    }
+
+    private static IEnumerable<string> GetXmlFiles(string[] xmlFiles)
+    {
+        var assemblyLocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? string.Empty;
+
+        foreach (var xmlFile in xmlFiles ?? Array.Empty<string>())
         {
-            options.XmlFiles = GetXmlFiles(xmlFiles).ToArray();
-
-            return options;
-        }
-
-        public static AutoCommentOptions AddEnumDescriptions(this AutoCommentOptions options)
-        {
-            options.AutoCommentEnumDescriptions = true;
-
-            return options;
-        }
-
-        private static IEnumerable<string> GetXmlFiles(string[] xmlFiles)
-        {
-            var assemblyLocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? string.Empty;
-
-            foreach (var xmlFile in xmlFiles ?? Array.Empty<string>())
+            var found = false;
+            var paths = new List<string>
             {
-                var found = false;
-                var paths = new List<string>
-                {
-                    xmlFile,
-                    Path.Combine(assemblyLocation, xmlFile)
-                };
+                xmlFile,
+                Path.Combine(assemblyLocation, xmlFile)
+            };
 
-                foreach (var path in paths)
+            foreach (var path in paths)
+            {
+                if (File.Exists(path))
                 {
-                    if (File.Exists(path))
-                    {
-                        yield return path;
-                        found = true;
+                    yield return path;
+                    found = true;
 
-                        break;
-                    }
+                    break;
                 }
+            }
 
-                if (!found)
-                {
-                    var searchedPaths = string.Join(Environment.NewLine, paths.Select(p => $"- {p}"));
+            if (!found)
+            {
+                var searchedPaths = string.Join(Environment.NewLine, paths.Select(p => $"- {p}"));
 
-                    throw new InvalidOperationException(
-                        $"XML file not found. Searched locations:{Environment.NewLine}{searchedPaths}");
-                }
+                throw new InvalidOperationException(
+                    $"XML file not found. Searched locations:{Environment.NewLine}{searchedPaths}");
             }
         }
     }

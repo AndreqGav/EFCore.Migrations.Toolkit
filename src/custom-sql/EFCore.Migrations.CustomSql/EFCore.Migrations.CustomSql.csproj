@@ -1,9 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFramework>net5.0</TargetFramework>
+        <TargetFramework>net6.0</TargetFramework>
         <PackageId>EFCore.Migrations.CustomSql</PackageId>
         <Title>CustomSql</Title>
-        <Version>5.0.0</Version>
+        <Version>6.0.0</Version>
         <Authors>AndreqGav</Authors>
         <Product>EFCore.Migrations.Toolkit</Product>
         <Description>Managing custom SQL via EF migration engine.</Description>

@@ -1,13 +1,12 @@
-namespace EFCore.Migrations.Triggers.PostgreSQL.Enums
+namespace EFCore.Migrations.Triggers.PostgreSQL.Enums;
+
+public enum TriggerOperationEnum
 {
-    public enum TriggerOperationEnum
-    {
-        Insert = 1,
+    Insert = 1,
 
-        Update = 2,
+    Update = 2,
 
-        Delete = 3,
+    Delete = 3,
 
-        InsertOrUpdate = 4,
-    }
+    InsertOrUpdate = 4,
 }

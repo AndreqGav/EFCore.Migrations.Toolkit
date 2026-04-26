@@ -1,36 +1,35 @@
-namespace EFCore.Migrations.Toolkit.Tests.Models.TableSplitting
+namespace EFCore.Migrations.Toolkit.Tests.Models.TableSplitting;
+
+/// <summary>
+/// Продукт.
+/// </summary>
+public class Product
 {
     /// <summary>
-    /// Продукт.
+    /// Идентификатор продукта.
     /// </summary>
-    public class Product
-    {
-        /// <summary>
-        /// Идентификатор продукта.
-        /// </summary>
-        public int Id { get; set; }
-
-        /// <summary>
-        /// Название продукта.
-        /// </summary>
-        public string Name { get; set; }
-
-        public ProductDetails Details { get; set; }
-    }
+    public int Id { get; set; }
 
     /// <summary>
-    /// Детали продукта.
+    /// Название продукта.
     /// </summary>
-    public class ProductDetails
-    {
-        /// <summary>
-        /// Идентификатор продукта.
-        /// </summary>
-        public int Id { get; set; }
+    public string Name { get; set; }
 
-        /// <summary>
-        /// Описание продукта.
-        /// </summary>
-        public string Description { get; set; }
-    }
+    public ProductDetails Details { get; set; }
+}
+
+/// <summary>
+/// Детали продукта.
+/// </summary>
+public class ProductDetails
+{
+    /// <summary>
+    /// Идентификатор продукта.
+    /// </summary>
+    public int Id { get; set; }
+
+    /// <summary>
+    /// Описание продукта.
+    /// </summary>
+    public string Description { get; set; }
 }

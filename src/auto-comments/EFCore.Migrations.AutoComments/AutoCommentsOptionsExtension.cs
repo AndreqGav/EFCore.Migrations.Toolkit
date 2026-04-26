@@ -8,96 +8,97 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata.Conventions.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace EFCore.Migrations.AutoComments
+namespace EFCore.Migrations.AutoComments;
+
+/// <summary>
+/// Расширение, которое позволяет передать и сохранить пути до XML файлов с комментариями.
+/// Также регистрирует плагин установки конвенций.
+/// </summary>
+internal class AutoCommentsOptionsExtension : IDbContextOptionsExtension
 {
-    /// <summary>
-    /// Расширение, которое позволяет передать и сохранить пути до XML файлов с комментариями.
-    /// Также регистрирует плагин установки конвенций.
-    /// </summary>
-    internal class AutoCommentsOptionsExtension : IDbContextOptionsExtension
+    public string[] XmlFiles { get; }
+
+    public bool AutoCommentEnumDescriptions { get; set; }
+
+    public AutoCommentsOptionsExtension(AutoCommentOptions autoCommentOptions)
     {
-        public string[] XmlFiles { get; }
+        XmlFiles = autoCommentOptions.XmlFiles;
+        AutoCommentEnumDescriptions = autoCommentOptions.AutoCommentEnumDescriptions;
 
-        public bool AutoCommentEnumDescriptions { get; set; }
+        Info = new AutoCommentsExtensionInfo(this);
+    }
 
-        public AutoCommentsOptionsExtension(AutoCommentOptions autoCommentOptions)
+    public DbContextOptionsExtensionInfo Info { get; }
+
+    public void ApplyServices(IServiceCollection services)
+    {
+        new EntityFrameworkServicesBuilder(services)
+            .TryAdd<IConventionSetPlugin, ConventionSetPlugin>();
+    }
+
+    public void Validate(IDbContextOptions options)
+    {
+        foreach (var xmlPath in XmlFiles)
         {
-            XmlFiles = autoCommentOptions.XmlFiles;
-            AutoCommentEnumDescriptions = autoCommentOptions.AutoCommentEnumDescriptions;
-
-            Info = new AutoCommentsExtensionInfo(this);
-        }
-
-        public DbContextOptionsExtensionInfo Info { get; }
-
-        public void ApplyServices(IServiceCollection services)
-        {
-            new EntityFrameworkServicesBuilder(services)
-                .TryAdd<IConventionSetPlugin, ConventionSetPlugin>();
-        }
-
-        public void Validate(IDbContextOptions options)
-        {
-            foreach (var xmlPath in XmlFiles)
+            if (!File.Exists(xmlPath))
             {
-                if (!File.Exists(xmlPath))
-                {
-                    throw new FileNotFoundException($"XML file {xmlPath} not exists", xmlPath);
-                }
+                throw new FileNotFoundException($"XML file {xmlPath} not exists", xmlPath);
             }
         }
     }
+}
 
-    public class AutoCommentsExtensionInfo : DbContextOptionsExtensionInfo
+public class AutoCommentsExtensionInfo : DbContextOptionsExtensionInfo
+{
+    private string _logFragment;
+
+    public AutoCommentsExtensionInfo(IDbContextOptionsExtension extension) : base(extension)
     {
-        private string _logFragment;
+    }
 
-        public AutoCommentsExtensionInfo(IDbContextOptionsExtension extension) : base(extension)
+    public override bool IsDatabaseProvider => false;
+
+    public override bool ShouldUseSameServiceProvider(DbContextOptionsExtensionInfo other) => other is AutoCommentsExtensionInfo;
+
+    public override int GetServiceProviderHashCode() => CalculateHashCode();
+
+    private int CalculateHashCode()
+    {
+        var hash = new HashCode();
+        foreach (var item in Extension.XmlFiles)
         {
+            hash.Add(item);
         }
 
-        public override bool IsDatabaseProvider => false;
+        hash.Add(Extension.AutoCommentEnumDescriptions);
 
-        public override long GetServiceProviderHashCode() => CalculateHashCode();
+        return hash.ToHashCode();
+    }
 
-        private int CalculateHashCode()
+    private new AutoCommentsOptionsExtension Extension => (AutoCommentsOptionsExtension)base.Extension;
+
+    public override string LogFragment
+    {
+        get
         {
-            var hash = new HashCode();
-            foreach (var item in Extension.XmlFiles)
+            if (_logFragment == null)
             {
-                hash.Add(item);
-            }
+                var builder = new StringBuilder();
 
-            hash.Add(Extension.AutoCommentEnumDescriptions);
-
-            return hash.ToHashCode();
-        }
-
-        private new AutoCommentsOptionsExtension Extension => (AutoCommentsOptionsExtension)base.Extension;
-
-        public override string LogFragment
-        {
-            get
-            {
-                if (_logFragment == null)
+                foreach (var xmlPath in Extension.XmlFiles)
                 {
-                    var builder = new StringBuilder();
-
-                    foreach (var xmlPath in Extension.XmlFiles)
-                    {
-                        builder.AppendJoin(' ', $"Used XML comments file: {xmlPath}");
-                    }
-
-                    _logFragment = builder.ToString();
+                    builder.AppendJoin(' ', $"Used XML comments file: {xmlPath}");
                 }
 
-                return _logFragment;
+                _logFragment = builder.ToString();
             }
-        }
 
-        public override void PopulateDebugInfo(IDictionary<string, string> debugInfo)
-        {
-            debugInfo["AutoCommentsOptionsExtension"] = "1";
+            return _logFragment;
         }
+    }
+
+    public override void PopulateDebugInfo(IDictionary<string, string> debugInfo)
+    {
+        debugInfo["AutoCommentsOptionsExtension"] = "1";
     }
 }

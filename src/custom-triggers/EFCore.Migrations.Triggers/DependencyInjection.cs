@@ -4,20 +4,19 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 
 // ReSharper disable once CheckNamespace
-namespace EFCore.Migrations.Toolkit
+namespace EFCore.Migrations.Toolkit;
+
+public static class TriggersDependencyInjection
 {
-    public static class TriggersDependencyInjection
+    public static TBuilder UseTriggers<TBuilder, TExtension>([NotNull] this TBuilder optionsBuilder)
+        where TExtension : TriggerSqlExtension, new()
+        where TBuilder : DbContextOptionsBuilder
     {
-        public static TBuilder UseTriggers<TBuilder, TExtension>([NotNull] this TBuilder optionsBuilder)
-            where TExtension : TriggerSqlExtension, new()
-            where TBuilder : DbContextOptionsBuilder
-        {
-            optionsBuilder.UseCustomSql();
+        optionsBuilder.UseCustomSql();
 
-            var extension = new TExtension();
-            ((IDbContextOptionsBuilderInfrastructure)optionsBuilder).AddOrUpdateExtension(extension);
+        var extension = new TExtension();
+        ((IDbContextOptionsBuilderInfrastructure)optionsBuilder).AddOrUpdateExtension(extension);
 
-            return optionsBuilder;
-        }
+        return optionsBuilder;
     }
 }

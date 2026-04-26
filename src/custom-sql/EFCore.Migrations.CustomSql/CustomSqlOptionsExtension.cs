@@ -5,44 +5,45 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace EFCore.Migrations.CustomSql
+namespace EFCore.Migrations.CustomSql;
+
+public class CustomSqlOptionsExtension : IDbContextOptionsExtension
 {
-    public class CustomSqlOptionsExtension : IDbContextOptionsExtension
+    public CustomSqlOptionsExtension(DbContextOptionsBuilder optionsBuilder)
     {
-        public CustomSqlOptionsExtension(DbContextOptionsBuilder optionsBuilder)
-        {
-            Info = new CustomSqlExtensionInfo(this);
+        Info = new CustomSqlExtensionInfo(this);
 
-            optionsBuilder.ReplaceService<IMigrationsModelDiffer, CompositeMigrationsModelDiffer>();
-        }
-
-        public void ApplyServices(IServiceCollection services)
-        {
-            services.AddSingleton<IMigrationOperationModifier, CustomSqlMigrationOperationModifier>();
-        }
-
-        public void Validate(IDbContextOptions options)
-        {
-        }
-
-        public DbContextOptionsExtensionInfo Info { get; }
+        optionsBuilder.ReplaceService<IMigrationsModelDiffer, CompositeMigrationsModelDiffer>();
     }
 
-    public class CustomSqlExtensionInfo : DbContextOptionsExtensionInfo
+    public void ApplyServices(IServiceCollection services)
     {
-        public CustomSqlExtensionInfo(IDbContextOptionsExtension extension) : base(extension)
-        {
-        }
-
-        public override long GetServiceProviderHashCode() => 0;
-
-        public override void PopulateDebugInfo(IDictionary<string, string> debugInfo)
-        {
-            debugInfo["CustomSqlExtensionInfo"] = "1";
-        }
-
-        public override bool IsDatabaseProvider => false;
-
-        public override string LogFragment => "CustomSqlExtensionInfo";
+        services.AddSingleton<IMigrationOperationModifier, CustomSqlMigrationOperationModifier>();
     }
+
+    public void Validate(IDbContextOptions options)
+    {
+    }
+
+    public DbContextOptionsExtensionInfo Info { get; }
+}
+
+public class CustomSqlExtensionInfo : DbContextOptionsExtensionInfo
+{
+    public CustomSqlExtensionInfo(IDbContextOptionsExtension extension) : base(extension)
+    {
+    }
+
+    public override bool ShouldUseSameServiceProvider(DbContextOptionsExtensionInfo other) => other is CustomSqlExtensionInfo;
+
+    public override int GetServiceProviderHashCode() => 0;
+
+    public override void PopulateDebugInfo(IDictionary<string, string> debugInfo)
+    {
+        debugInfo["CustomSqlExtensionInfo"] = "1";
+    }
+
+    public override bool IsDatabaseProvider => false;
+
+    public override string LogFragment => "CustomSqlExtensionInfo";
 }

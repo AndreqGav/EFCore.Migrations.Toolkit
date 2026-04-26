@@ -1,7 +1,6 @@
-﻿namespace EFCore.Migrations.Triggers.Constants
+﻿namespace EFCore.Migrations.Triggers.Constants;
+
+public class SqlTriggerConstants
 {
-    public class SqlTriggerConstants
-    {
-        public const string Trigger = "CustomSqlConstants.Trigger";
-    }
+    public const string Trigger = "CustomSqlConstants.Trigger";
 }

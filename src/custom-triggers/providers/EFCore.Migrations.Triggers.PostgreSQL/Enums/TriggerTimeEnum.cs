@@ -1,11 +1,10 @@
-namespace EFCore.Migrations.Triggers.PostgreSQL.Enums
+namespace EFCore.Migrations.Triggers.PostgreSQL.Enums;
+
+public enum TriggerTimeEnum
 {
-    public enum TriggerTimeEnum
-    {
-        Before = 1,
+    Before = 1,
 
-        After = 2,
+    After = 2,
 
-        Instead = 3,
-    }
+    Instead = 3,
 }

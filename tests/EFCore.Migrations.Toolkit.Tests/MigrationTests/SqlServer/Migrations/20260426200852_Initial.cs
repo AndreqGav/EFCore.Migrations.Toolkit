@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
 
+#nullable disable
+
 namespace EFCore.Migrations.Toolkit.Tests.MigrationTests.SqlServer.Migrations
 {
     public partial class Initial : Migration

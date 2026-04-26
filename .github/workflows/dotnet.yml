@@ -2,7 +2,7 @@ name: Push Nuget Packages
 
 on:
   push:
-    branches: [ "net-5" ]
+    branches: [ "net-6" ]
   workflow_dispatch:
     inputs:
       logLevel:
@@ -44,24 +44,20 @@ jobs:
 
     env:
       ConnectionStrings__PostgreSqlTestDatabase: "Host=localhost;Port=5432;Database=EFCore.Migrations.Toolkit.Tests;Username=postgres;Password=postgres"
-      ConnectionStrings__SqlServerTestDatabase: "Server=localhost,1433;Database=EFCore.Migrations.Toolkit.Tests;User Id=sa;Password=ComplexPassword123!;"
+      ConnectionStrings__SqlServerTestDatabase: "Server=localhost,1433;Database=EFCore.Migrations.Toolkit.Tests;User Id=sa;Password=ComplexPassword123!;TrustServerCertificate=True;"
 
     steps:
     - uses: actions/checkout@v4
-    - name: Install libssl1.1
-      run: |
-        wget http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2_amd64.deb
-        sudo dpkg -i libssl1.1_1.1.1f-1ubuntu2_amd64.deb
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 5.0.x
+        dotnet-version: 6.0.x
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
       run: dotnet build -c Release
     - name: Test
-      run: dotnet test -f net5.0 -c Release --no-build --no-restore
+      run: dotnet test -f net6.0 -c Release --no-build --no-restore
 
   build-and-push:
     needs: tests
@@ -69,14 +65,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - name: Install libssl1.1
-      run: |
-        wget http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2_amd64.deb
-        sudo dpkg -i libssl1.1_1.1.1f-1ubuntu2_amd64.deb
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 5.0.x
+        dotnet-version: 6.0.x
     - name: Restore dependencies
       run: dotnet restore
     - name: Build

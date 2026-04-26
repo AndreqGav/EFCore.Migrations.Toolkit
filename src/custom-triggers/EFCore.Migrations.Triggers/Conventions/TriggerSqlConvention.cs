@@ -2,44 +2,38 @@
 using EFCore.Migrations.CustomSql;
 using EFCore.Migrations.Triggers.Abstractions;
 using EFCore.Migrations.Triggers.Models;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Metadata.Conventions;
-using Microsoft.EntityFrameworkCore.Metadata.Conventions.Infrastructure;
 
-namespace EFCore.Migrations.Triggers.Conventions
+namespace EFCore.Migrations.Triggers.Conventions;
+
+public class TriggerSqlConvention : IModelFinalizingConvention
 {
-    public class TriggerSqlConvention : IModelFinalizingConvention
+    private readonly ITriggerSqlGenerator _triggerSqlGenerator;
+
+    public TriggerSqlConvention(ITriggerSqlGenerator triggerSqlGenerator)
     {
-        private readonly ITriggerSqlGenerator _triggerSqlGenerator;
+        _triggerSqlGenerator = triggerSqlGenerator;
+    }
 
-        private readonly IRelationalAnnotationProvider _annotationProvider;
-
-        public TriggerSqlConvention(ITriggerSqlGenerator triggerSqlGenerator, RelationalConventionSetBuilderDependencies dependencies)
+    public void ProcessModelFinalizing(IConventionModelBuilder modelBuilder, IConventionContext<IConventionModelBuilder> context)
+    {
+        foreach (var entityType in modelBuilder.Metadata.GetEntityTypes())
         {
-            _triggerSqlGenerator = triggerSqlGenerator;
-            _annotationProvider = dependencies.RelationalAnnotationProvider;
-        }
+            var triggerAnnotations = entityType.GetAnnotations()
+                .Where(a => a.Value is TriggerObject)
+                .ToList();
 
-        public void ProcessModelFinalizing(IConventionModelBuilder modelBuilder, IConventionContext<IConventionModelBuilder> context)
-        {
-            foreach (var entityType in modelBuilder.Metadata.GetEntityTypes())
+            foreach (var annotation in triggerAnnotations)
             {
-                var triggerAnnotations = entityType.GetAnnotations()
-                    .Where(a => a.Value is TriggerObject)
-                    .ToList();
+                if (annotation.Value is not TriggerObject triggerData) continue;
 
-                foreach (var annotation in triggerAnnotations)
-                {
-                    if (annotation.Value is not TriggerObject triggerData) continue;
+                var sqlUp = _triggerSqlGenerator.GenerateCreateTriggerSql(triggerData);
+                var sqpDown = _triggerSqlGenerator.GenerateDeleteTriggerSql(triggerData);
 
-                    var sqlUp = _triggerSqlGenerator.GenerateCreateTriggerSql(triggerData);
-                    var sqpDown = _triggerSqlGenerator.GenerateDeleteTriggerSql(triggerData);
+                entityType.RemoveAnnotation(annotation.Name);
 
-                    entityType.RemoveAnnotation(annotation.Name);
-
-                    entityType.Builder.AddCustomSql(triggerData.Name, sqlUp, sqpDown);
-                }
+                entityType.Builder.AddCustomSql(triggerData.Name, sqlUp, sqpDown);
             }
         }
     }

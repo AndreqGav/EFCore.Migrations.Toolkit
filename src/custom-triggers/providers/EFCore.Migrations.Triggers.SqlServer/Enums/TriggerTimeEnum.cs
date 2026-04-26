@@ -1,9 +1,8 @@
-namespace EFCore.Migrations.Triggers.SqlServer.Enums
-{
-    public enum TriggerTimeEnum
-    {
-        After = 1,
+namespace EFCore.Migrations.Triggers.SqlServer.Enums;
 
-        InsteadOf = 2,
-    }
+public enum TriggerTimeEnum
+{
+    After = 1,
+
+    InsteadOf = 2,
 }

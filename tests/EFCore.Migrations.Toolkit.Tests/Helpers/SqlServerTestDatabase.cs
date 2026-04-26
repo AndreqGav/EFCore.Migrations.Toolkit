@@ -2,45 +2,46 @@ using System;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 
-namespace EFCore.Migrations.Toolkit.Tests.Helpers
+namespace EFCore.Migrations.Toolkit.Tests.Helpers;
+
+static internal class SqlServerTestDatabase
 {
-    internal static class SqlServerTestDatabase
+    private static readonly Lazy<string> ConnectionStringLazy = new(LoadConnectionString);
+
+    private static readonly Lazy<bool> IsAvailableLazy = new(TryConnect);
+
+    public static string ConnectionString => ConnectionStringLazy.Value;
+
+    public static bool IsAvailable => IsAvailableLazy.Value;
+
+    private static string LoadConnectionString()
     {
-        private static readonly Lazy<string> ConnectionStringLazy = new(LoadConnectionString);
+        return new ConfigurationBuilder()
+            .SetBasePath(AppContext.BaseDirectory)
+            .AddJsonFile("appsettings.json", optional: true)
+            .AddJsonFile("appsettings.local.json", optional: true)
+            .AddEnvironmentVariables()
+            .Build()
+            .GetConnectionString("SqlServerTestDatabase");
+    }
 
-        private static readonly Lazy<bool> IsAvailableLazy = new(TryConnect);
+    private static bool TryConnect()
+    {
+        var connectionString = ConnectionString;
 
-        public static string ConnectionString => ConnectionStringLazy.Value;
+        if (string.IsNullOrEmpty(connectionString))
+            return false;
 
-        public static bool IsAvailable => IsAvailableLazy.Value;
-
-        private static string LoadConnectionString()
+        try
         {
-            return new ConfigurationBuilder()
-                .SetBasePath(AppContext.BaseDirectory)
-                .AddJsonFile("appsettings.json", optional: true)
-                .AddJsonFile("appsettings.local.json", optional: true)
-                .AddEnvironmentVariables()
-                .Build()
-                .GetConnectionString("SqlServerTestDatabase");
+            using var connection = new SqlConnection(connectionString);
+            connection.Open();
+
+            return true;
         }
-
-        private static bool TryConnect()
+        catch
         {
-            var connectionString = ConnectionString;
-            if (string.IsNullOrEmpty(connectionString))
-                return false;
-
-            try
-            {
-                using var connection = new SqlConnection(connectionString);
-                connection.Open();
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
+            return false;
         }
     }
 }
