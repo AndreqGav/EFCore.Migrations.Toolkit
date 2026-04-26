@@ -16,7 +16,7 @@ namespace EFCore.Migrations.Toolkit.Tests.MigrationTests.SqlServer.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.15")
+                .HasAnnotation("ProductVersion", "10.0.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlDown:get_blog_name", "DROP PROCEDURE IF EXISTS [get_blog_name]")
                 .HasAnnotation("SqlUp:get_blog_name", "CREATE OR ALTER PROCEDURE [get_blog_name] @id INT AS SELECT [Name] FROM [Blogs] WHERE [Id] = @id");
@@ -87,7 +87,7 @@ namespace EFCore.Migrations.Toolkit.Tests.MigrationTests.SqlServer.Migrations
 
                     b.ToTable("PostBase");
 
-                    b.HasDiscriminator().HasValue("PostBase");
+                    b.HasDiscriminator<string>("Discriminator").HasValue("PostBase");
 
                     b.UseTphMappingStrategy();
                 });

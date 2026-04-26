@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace EFCore.Migrations.Toolkit.Tests.MigrationTests.PostgreSQL.Migrations
 {
     [DbContext(typeof(PostgreSqlMigrationDbContext))]
-    [Migration("20260426211812_Initial")]
+    [Migration("20260426212458_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -19,7 +19,7 @@ namespace EFCore.Migrations.Toolkit.Tests.MigrationTests.PostgreSQL.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.15")
+                .HasAnnotation("ProductVersion", "10.0.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63)
                 .HasAnnotation("SqlDown:blog_names", "DROP VIEW IF EXISTS public.blog_names")
                 .HasAnnotation("SqlDown:get_blog_name", "DROP FUNCTION IF EXISTS GetName")
@@ -136,7 +136,7 @@ namespace EFCore.Migrations.Toolkit.Tests.MigrationTests.PostgreSQL.Migrations
                             t.HasComment("Базовый тип в наследовании TPH.");
                         });
 
-                    b.HasDiscriminator().HasValue("PostBase");
+                    b.HasDiscriminator<string>("Discriminator").HasValue("PostBase");
 
                     b.UseTphMappingStrategy();
                 });

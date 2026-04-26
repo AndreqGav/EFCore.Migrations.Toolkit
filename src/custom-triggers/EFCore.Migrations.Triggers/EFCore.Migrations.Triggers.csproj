@@ -1,9 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFramework>net9.0</TargetFramework>
+        <TargetFramework>net10.0</TargetFramework>
         <PackageId>EFCore.Migrations.Triggers</PackageId>
         <Title>Triggers</Title>
-        <Version>9.0.0</Version>
+        <Version>10.0.0</Version>
         <Authors>AndreqGav</Authors>
         <Product>EFCore.Migrations.Toolkit</Product>
         <Description>Managing the creation of triggers in the database via the EF migrations.</Description>
