@@ -47,6 +47,27 @@ public class InheritanceStrategyConventionTests
     }
 
     [Fact]
+    public void AutoComments_Tpc_ShouldNot_SetComment_OnAbstractBase()
+    {
+        // Arrange
+        using var context = new TpcAutoCommentsContext(BuildOptions<TpcAutoCommentsContext>());
+
+        // Act + Assert
+        Assert.Null(GetTableComment<BlogBase>(context));
+    }
+
+    [Fact]
+    public void AutoComments_Tpc_Should_SetComment_OnConcreteTypes()
+    {
+        // Arrange
+        using var context = new TpcAutoCommentsContext(BuildOptions<TpcAutoCommentsContext>());
+
+        // Act + Assert
+        Assert.Equal("Наследник А в TPC.", GetTableComment<BlogA>(context));
+        Assert.Equal("Наследник Б в TPC.", GetTableComment<BlogB>(context));
+    }
+
+    [Fact]
     public void AutoComments_Tpt_Should_SetComment_OnBaseType()
     {
         // Arrange
@@ -90,6 +111,29 @@ internal sealed class TphAutoCommentsContext : DbContext
 
         modelBuilder.Entity<PostA>(b => b.HasBaseType<PostBase>());
         modelBuilder.Entity<PostB>(b => b.HasBaseType<PostBase>());
+    }
+}
+
+internal sealed class TpcAutoCommentsContext : DbContext
+{
+    public DbSet<BlogA> BlogAs { get; set; }
+
+    public DbSet<BlogB> BlogBs { get; set; }
+
+    public TpcAutoCommentsContext(DbContextOptions<TpcAutoCommentsContext> options) : base(options)
+    {
+    }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<BlogBase>(builder =>
+        {
+            builder.HasKey(e => e.Id);
+            builder.UseTpcMappingStrategy();
+        });
+
+        modelBuilder.Entity<BlogA>();
+        modelBuilder.Entity<BlogB>();
     }
 }
 

@@ -112,5 +112,13 @@ public class PostgreSqlMigrationDbContext : DbContext
 
     private static void ConfigureTpcInheritance(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<BlogBase>(builder =>
+        {
+            builder.HasKey(entity => entity.Id);
+            builder.UseTpcMappingStrategy();
+        });
+
+        modelBuilder.Entity<BlogA>();
+        modelBuilder.Entity<BlogB>();
     }
 }

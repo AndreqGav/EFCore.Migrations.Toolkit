@@ -11,6 +11,9 @@ namespace EFCore.Migrations.Toolkit.Tests.MigrationTests.PostgreSQL.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateSequence(
+                name: "BlogBaseSequence");
+
             migrationBuilder.CreateTable(
                 name: "ArticleBase",
                 columns: table => new
@@ -23,6 +26,32 @@ namespace EFCore.Migrations.Toolkit.Tests.MigrationTests.PostgreSQL.Migrations
                     table.PrimaryKey("PK_ArticleBase", x => x.Id);
                 },
                 comment: "Базовый тип в наследовании TPT.");
+
+            migrationBuilder.CreateTable(
+                name: "BlogA",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false, defaultValueSql: "nextval('\"BlogBaseSequence\"')", comment: "Идентификатор."),
+                    Name = table.Column<string>(type: "text", nullable: true, comment: "Имя А.")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BlogA", x => x.Id);
+                },
+                comment: "Наследник А в TPC.");
+
+            migrationBuilder.CreateTable(
+                name: "BlogB",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false, defaultValueSql: "nextval('\"BlogBaseSequence\"')", comment: "Идентификатор."),
+                    Name = table.Column<string>(type: "text", nullable: true, comment: "Имя Б.")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BlogB", x => x.Id);
+                },
+                comment: "Наследник Б в TPC.");
 
             migrationBuilder.CreateTable(
                 name: "Blogs",
@@ -64,7 +93,7 @@ namespace EFCore.Migrations.Toolkit.Tests.MigrationTests.PostgreSQL.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false, comment: "Идентификатор.")
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Discriminator = table.Column<string>(type: "text", nullable: false),
+                    Discriminator = table.Column<string>(type: "character varying(8)", maxLength: 8, nullable: false),
                     TextA = table.Column<string>(type: "text", nullable: true, comment: "Текст А."),
                     TextB = table.Column<string>(type: "text", nullable: true, comment: "Текст Б.")
                 },
@@ -147,6 +176,12 @@ namespace EFCore.Migrations.Toolkit.Tests.MigrationTests.PostgreSQL.Migrations
                 name: "ArticleB");
 
             migrationBuilder.DropTable(
+                name: "BlogA");
+
+            migrationBuilder.DropTable(
+                name: "BlogB");
+
+            migrationBuilder.DropTable(
                 name: "Blogs");
 
             migrationBuilder.DropTable(
@@ -157,6 +192,9 @@ namespace EFCore.Migrations.Toolkit.Tests.MigrationTests.PostgreSQL.Migrations
 
             migrationBuilder.DropTable(
                 name: "ArticleBase");
+
+            migrationBuilder.DropSequence(
+                name: "BlogBaseSequence");
         }
     }
 }

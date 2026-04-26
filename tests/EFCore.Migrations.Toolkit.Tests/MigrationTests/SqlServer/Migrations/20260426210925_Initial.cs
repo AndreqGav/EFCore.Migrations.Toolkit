@@ -48,7 +48,7 @@ namespace EFCore.Migrations.Toolkit.Tests.MigrationTests.SqlServer.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Discriminator = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Discriminator = table.Column<string>(type: "nvarchar(8)", maxLength: 8, nullable: false),
                     TextA = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     TextB = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },

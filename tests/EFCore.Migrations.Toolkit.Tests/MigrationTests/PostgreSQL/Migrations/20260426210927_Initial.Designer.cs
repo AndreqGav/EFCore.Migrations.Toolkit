@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace EFCore.Migrations.Toolkit.Tests.MigrationTests.PostgreSQL.Migrations
 {
     [DbContext(typeof(PostgreSqlMigrationDbContext))]
-    [Migration("20260426203658_Initial")]
+    [Migration("20260426210927_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -19,7 +19,7 @@ namespace EFCore.Migrations.Toolkit.Tests.MigrationTests.PostgreSQL.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.20")
+                .HasAnnotation("ProductVersion", "8.0.26")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63)
                 .HasAnnotation("SqlDown:blog_names", "DROP VIEW IF EXISTS public.blog_names")
                 .HasAnnotation("SqlDown:get_blog_name", "DROP FUNCTION IF EXISTS GetName")
@@ -27,6 +27,8 @@ namespace EFCore.Migrations.Toolkit.Tests.MigrationTests.PostgreSQL.Migrations
                 .HasAnnotation("SqlUp:get_blog_name", "CREATE OR REPLACE FUNCTION GetName(id integer)\nRETURNS text AS $$\nBEGIN\nRETURN (SELECT \"Name\" FROM \"Blogs\" WHERE \"Id\" = id);\n END;\n$$ LANGUAGE plpgsql;");
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.HasSequence("BlogBaseSequence");
 
             modelBuilder.Entity("EFCore.Migrations.Toolkit.Tests.Models.Blog", b =>
                 {
@@ -96,6 +98,23 @@ namespace EFCore.Migrations.Toolkit.Tests.MigrationTests.PostgreSQL.Migrations
                     b.UseTptMappingStrategy();
                 });
 
+            modelBuilder.Entity("EFCore.Migrations.Toolkit.Tests.Models.Inheritance.BlogBase", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValueSql("nextval('\"BlogBaseSequence\"')")
+                        .HasComment("Идентификатор.");
+
+                    NpgsqlPropertyBuilderExtensions.UseSequence(b.Property<int>("Id"));
+
+                    b.HasKey("Id");
+
+                    b.ToTable((string)null);
+
+                    b.UseTpcMappingStrategy();
+                });
+
             modelBuilder.Entity("EFCore.Migrations.Toolkit.Tests.Models.Inheritance.PostBase", b =>
                 {
                     b.Property<int>("Id")
@@ -107,7 +126,8 @@ namespace EFCore.Migrations.Toolkit.Tests.MigrationTests.PostgreSQL.Migrations
 
                     b.Property<string>("Discriminator")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(8)
+                        .HasColumnType("character varying(8)");
 
                     b.HasKey("Id");
 
@@ -116,7 +136,7 @@ namespace EFCore.Migrations.Toolkit.Tests.MigrationTests.PostgreSQL.Migrations
                             t.HasComment("Базовый тип в наследовании TPH.");
                         });
 
-                    b.HasDiscriminator<string>("Discriminator").HasValue("PostBase");
+                    b.HasDiscriminator().HasValue("PostBase");
 
                     b.UseTphMappingStrategy();
                 });
@@ -195,6 +215,34 @@ namespace EFCore.Migrations.Toolkit.Tests.MigrationTests.PostgreSQL.Migrations
                     b.ToTable("ArticleB", t =>
                         {
                             t.HasComment("Наследник Б в TPT.");
+                        });
+                });
+
+            modelBuilder.Entity("EFCore.Migrations.Toolkit.Tests.Models.Inheritance.BlogA", b =>
+                {
+                    b.HasBaseType("EFCore.Migrations.Toolkit.Tests.Models.Inheritance.BlogBase");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text")
+                        .HasComment("Имя А.");
+
+                    b.ToTable("BlogA", t =>
+                        {
+                            t.HasComment("Наследник А в TPC.");
+                        });
+                });
+
+            modelBuilder.Entity("EFCore.Migrations.Toolkit.Tests.Models.Inheritance.BlogB", b =>
+                {
+                    b.HasBaseType("EFCore.Migrations.Toolkit.Tests.Models.Inheritance.BlogBase");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text")
+                        .HasComment("Имя Б.");
+
+                    b.ToTable("BlogB", t =>
+                        {
+                            t.HasComment("Наследник Б в TPC.");
                         });
                 });
 

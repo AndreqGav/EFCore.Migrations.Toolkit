@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EFCore.Migrations.Toolkit.Tests.MigrationTests.SqlServer.Migrations
 {
     [DbContext(typeof(SqlServerMigrationDbContext))]
-    [Migration("20260426203655_Initial")]
+    [Migration("20260426210925_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -19,7 +19,7 @@ namespace EFCore.Migrations.Toolkit.Tests.MigrationTests.SqlServer.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.20")
+                .HasAnnotation("ProductVersion", "8.0.26")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlDown:get_blog_name", "DROP PROCEDURE IF EXISTS [get_blog_name]")
                 .HasAnnotation("SqlUp:get_blog_name", "CREATE OR ALTER PROCEDURE [get_blog_name] @id INT AS SELECT [Name] FROM [Blogs] WHERE [Id] = @id");
@@ -49,6 +49,7 @@ namespace EFCore.Migrations.Toolkit.Tests.MigrationTests.SqlServer.Migrations
 
                     b
                         .HasAnnotation("SqlDown:trg_blog_log_changes", "DROP TRIGGER [trg_blog_log_changes];")
+                        .HasAnnotation("SqlServer:UseSqlOutputClause", false)
                         .HasAnnotation("SqlUp:trg_blog_log_changes", "CREATE OR ALTER TRIGGER [trg_blog_log_changes]\nON [Blogs]\nAFTER INSERT, UPDATE\nAS\nBEGIN\n    SET NOCOUNT ON;\n-- log blog insert or update\nEND;");
                 });
 
@@ -82,13 +83,14 @@ namespace EFCore.Migrations.Toolkit.Tests.MigrationTests.SqlServer.Migrations
 
                     b.Property<string>("Discriminator")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(8)
+                        .HasColumnType("nvarchar(8)");
 
                     b.HasKey("Id");
 
                     b.ToTable("PostBase");
 
-                    b.HasDiscriminator<string>("Discriminator").HasValue("PostBase");
+                    b.HasDiscriminator().HasValue("PostBase");
 
                     b.UseTphMappingStrategy();
                 });
@@ -131,6 +133,7 @@ namespace EFCore.Migrations.Toolkit.Tests.MigrationTests.SqlServer.Migrations
                     b
                         .HasAnnotation("SqlDown:trg_order_prevent_negative_amount", "DROP TRIGGER [trg_order_prevent_negative_amount];")
                         .HasAnnotation("SqlDown:trg_order_set_confirmed", "DROP TRIGGER [trg_order_set_confirmed];")
+                        .HasAnnotation("SqlServer:UseSqlOutputClause", false)
                         .HasAnnotation("SqlUp:trg_order_prevent_negative_amount", "CREATE OR ALTER TRIGGER [trg_order_prevent_negative_amount]\nON [Orders]\nAFTER UPDATE\nAS\nBEGIN\n    SET NOCOUNT ON;\nIF EXISTS (SELECT 1 FROM inserted WHERE [TotalAmount] < 0)\n    THROW 50001, 'Amount must not be negative', 1;\nEND;")
                         .HasAnnotation("SqlUp:trg_order_set_confirmed", "CREATE OR ALTER TRIGGER [trg_order_set_confirmed]\nON [Orders]\nAFTER INSERT\nAS\nBEGIN\n    SET NOCOUNT ON;\nUPDATE [Orders] SET [IsConfirmed] = 0 WHERE [Id] IN (SELECT [Id] FROM inserted)\nEND;");
                 });
