@@ -16,7 +16,7 @@ namespace EFCore.Migrations.Toolkit.Tests.MigrationTests.PostgreSQL.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.26")
+                .HasAnnotation("ProductVersion", "9.0.15")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63)
                 .HasAnnotation("SqlDown:blog_names", "DROP VIEW IF EXISTS public.blog_names")
                 .HasAnnotation("SqlDown:get_blog_name", "DROP FUNCTION IF EXISTS GetName")

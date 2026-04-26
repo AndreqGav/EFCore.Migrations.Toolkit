@@ -1,9 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
+        <TargetFramework>net9.0</TargetFramework>
         <PackageId>EFCore.Migrations.Triggers.SqlServer</PackageId>
         <Title>Triggers.SqlServer</Title>
-        <Version>8.0.0</Version>
+        <Version>9.0.0</Version>
         <Authors>AndreqGav</Authors>
         <Product>EFCore.Migrations.Toolkit</Product>
         <Description>Managing the creation of triggers in the database sqlServer through the EF migration mechanism.</Description>
@@ -17,7 +17,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.0" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.0" />
     </ItemGroup>
 
     <ItemGroup>
