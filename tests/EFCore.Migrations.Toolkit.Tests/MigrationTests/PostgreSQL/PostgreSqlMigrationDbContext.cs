@@ -91,6 +91,7 @@ public class PostgreSqlMigrationDbContext : DbContext
         modelBuilder.Entity<PostBase>(builder =>
         {
             builder.HasKey(entity => entity.Id);
+            builder.UseTphMappingStrategy();
         });
 
         modelBuilder.Entity<PostA>(builder => builder.HasBaseType<PostBase>());
@@ -99,6 +100,14 @@ public class PostgreSqlMigrationDbContext : DbContext
 
     private static void ConfigureTptInheritance(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<ArticleBase>(builder =>
+        {
+            builder.HasKey(entity => entity.Id);
+            builder.UseTptMappingStrategy();
+        });
+
+        modelBuilder.Entity<ArticleA>();
+        modelBuilder.Entity<ArticleB>();
     }
 
     private static void ConfigureTpcInheritance(ModelBuilder modelBuilder)

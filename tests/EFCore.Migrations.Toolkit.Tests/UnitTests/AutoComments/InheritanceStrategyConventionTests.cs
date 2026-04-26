@@ -46,6 +46,26 @@ public class InheritanceStrategyConventionTests
         Assert.Null(GetTableComment<PostB>(context));
     }
 
+    [Fact]
+    public void AutoComments_Tpt_Should_SetComment_OnBaseType()
+    {
+        // Arrange
+        using var context = new TptAutoCommentsContext(BuildOptions<TptAutoCommentsContext>());
+
+        // Act + Assert
+        Assert.Equal("Базовый тип в наследовании TPT.", GetTableComment<ArticleBase>(context));
+    }
+
+    [Fact]
+    public void AutoComments_Tpt_Should_SetComment_OnDerivedTypes()
+    {
+        // Arrange
+        using var context = new TptAutoCommentsContext(BuildOptions<TptAutoCommentsContext>());
+
+        // Act + Assert
+        Assert.Equal("Наследник А в TPT.", GetTableComment<ArticleA>(context));
+        Assert.Equal("Наследник Б в TPT.", GetTableComment<ArticleB>(context));
+    }
 }
 
 internal sealed class TphAutoCommentsContext : DbContext
@@ -65,9 +85,35 @@ internal sealed class TphAutoCommentsContext : DbContext
         modelBuilder.Entity<PostBase>(builder =>
         {
             builder.HasKey(e => e.Id);
+            builder.UseTphMappingStrategy();
         });
 
         modelBuilder.Entity<PostA>(b => b.HasBaseType<PostBase>());
         modelBuilder.Entity<PostB>(b => b.HasBaseType<PostBase>());
+    }
+}
+
+internal sealed class TptAutoCommentsContext : DbContext
+{
+    public DbSet<ArticleBase> Articles { get; set; }
+
+    public DbSet<ArticleA> ArticleAs { get; set; }
+
+    public DbSet<ArticleB> ArticleBs { get; set; }
+
+    public TptAutoCommentsContext(DbContextOptions<TptAutoCommentsContext> options) : base(options)
+    {
+    }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<ArticleBase>(builder =>
+        {
+            builder.HasKey(e => e.Id);
+            builder.UseTptMappingStrategy();
+        });
+
+        modelBuilder.Entity<ArticleA>();
+        modelBuilder.Entity<ArticleB>();
     }
 }

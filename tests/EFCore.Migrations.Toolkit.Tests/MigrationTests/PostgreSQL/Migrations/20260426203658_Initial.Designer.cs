@@ -11,14 +11,15 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace EFCore.Migrations.Toolkit.Tests.MigrationTests.PostgreSQL.Migrations
 {
     [DbContext(typeof(PostgreSqlMigrationDbContext))]
-    [Migration("20260426200855_Initial")]
+    [Migration("20260426203658_Initial")]
     partial class Initial
     {
+        /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.36")
+                .HasAnnotation("ProductVersion", "7.0.20")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63)
                 .HasAnnotation("SqlDown:blog_names", "DROP VIEW IF EXISTS public.blog_names")
                 .HasAnnotation("SqlDown:get_blog_name", "DROP FUNCTION IF EXISTS GetName")
@@ -46,10 +47,12 @@ namespace EFCore.Migrations.Toolkit.Tests.MigrationTests.PostgreSQL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Blogs");
+                    b.ToTable("Blogs", t =>
+                        {
+                            t.HasComment("Блог.");
+                        });
 
                     b
-                        .HasComment("Блог.")
                         .HasAnnotation("SqlDown:before_insert_or_update_blog", "DROP FUNCTION before_insert_or_update_blog() CASCADE;")
                         .HasAnnotation("SqlUp:before_insert_or_update_blog", "CREATE FUNCTION before_insert_or_update_blog() RETURNS trigger as $before_insert_or_update_blog$\nBEGIN\nIF NEW.\"Url\" IS NOT NULL AND NEW.\"Url\" IS DISTINCT FROM OLD.\"Url\" THEN\n    RAISE EXCEPTION 'Нельзя менять URL';\nEND IF;\nIF NEW.\"Name\" IS NOT NULL THEN\n    UPDATE \"Blogs\" SET \"Url\" = NEW.\"Url\"\n    WHERE \"Name\" = NEW.\"Name\";\nEND IF;\nRETURN NEW;\nEND;\n$before_insert_or_update_blog$ LANGUAGE plpgsql;\n\nCREATE TRIGGER before_insert_or_update_blog BEFORE INSERT OR UPDATE\nON \"Blogs\"\nFOR EACH ROW EXECUTE PROCEDURE before_insert_or_update_blog();");
                 });
@@ -65,11 +68,32 @@ namespace EFCore.Migrations.Toolkit.Tests.MigrationTests.PostgreSQL.Migrations
                     b.Property<string>("Url")
                         .HasColumnType("text");
 
-                    b.ToView("blog_view");
+                    b.ToTable((string)null);
+
+                    b.ToView("blog_view", (string)null);
 
                     b
                         .HasAnnotation("SqlDown:blog_view", "DROP VIEW IF EXISTS blog_view")
                         .HasAnnotation("SqlUp:blog_view", "CREATE VIEW blog_view AS SELECT * FROM \"Blogs\"");
+                });
+
+            modelBuilder.Entity("EFCore.Migrations.Toolkit.Tests.Models.Inheritance.ArticleBase", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasComment("Идентификатор.");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ArticleBase", t =>
+                        {
+                            t.HasComment("Базовый тип в наследовании TPT.");
+                        });
+
+                    b.UseTptMappingStrategy();
                 });
 
             modelBuilder.Entity("EFCore.Migrations.Toolkit.Tests.Models.Inheritance.PostBase", b =>
@@ -87,11 +111,14 @@ namespace EFCore.Migrations.Toolkit.Tests.MigrationTests.PostgreSQL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("PostBase");
+                    b.ToTable("PostBase", t =>
+                        {
+                            t.HasComment("Базовый тип в наследовании TPH.");
+                        });
 
                     b.HasDiscriminator<string>("Discriminator").HasValue("PostBase");
 
-                    b.HasComment("Базовый тип в наследовании TPH.");
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("EFCore.Migrations.Toolkit.Tests.Models.Order", b =>
@@ -131,14 +158,44 @@ namespace EFCore.Migrations.Toolkit.Tests.MigrationTests.PostgreSQL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Orders");
+                    b.ToTable("Orders", t =>
+                        {
+                            t.HasComment("Заказ покупателя.");
+                        });
 
                     b
-                        .HasComment("Заказ покупателя.")
                         .HasAnnotation("SqlDown:prevent_update_negative_amount", "DROP FUNCTION prevent_update_negative_amount() CASCADE;")
                         .HasAnnotation("SqlDown:set_order_defaults", "DROP FUNCTION set_order_defaults() CASCADE;")
                         .HasAnnotation("SqlUp:prevent_update_negative_amount", "CREATE FUNCTION prevent_update_negative_amount() RETURNS trigger as $prevent_update_negative_amount$\nBEGIN\nIF NEW.total_amount < 0 THEN RAISE EXCEPTION 'amount negative'; END IF;\nRETURN NEW;\nEND;\n$prevent_update_negative_amount$ LANGUAGE plpgsql;\n\nCREATE TRIGGER prevent_update_negative_amount BEFORE UPDATE\nON \"Orders\"\nFOR EACH ROW EXECUTE PROCEDURE prevent_update_negative_amount();")
                         .HasAnnotation("SqlUp:set_order_defaults", "CREATE FUNCTION set_order_defaults() RETURNS trigger as $set_order_defaults$\nBEGIN\nNEW.is_confirmed = false;\nRETURN NEW;\nEND;\n$set_order_defaults$ LANGUAGE plpgsql;\n\nCREATE TRIGGER set_order_defaults BEFORE INSERT\nON \"Orders\"\nFOR EACH ROW EXECUTE PROCEDURE set_order_defaults();");
+                });
+
+            modelBuilder.Entity("EFCore.Migrations.Toolkit.Tests.Models.Inheritance.ArticleA", b =>
+                {
+                    b.HasBaseType("EFCore.Migrations.Toolkit.Tests.Models.Inheritance.ArticleBase");
+
+                    b.Property<string>("ContentA")
+                        .HasColumnType("text")
+                        .HasComment("Специфичное содержимое А.");
+
+                    b.ToTable("ArticleA", t =>
+                        {
+                            t.HasComment("Наследник А в TPT.");
+                        });
+                });
+
+            modelBuilder.Entity("EFCore.Migrations.Toolkit.Tests.Models.Inheritance.ArticleB", b =>
+                {
+                    b.HasBaseType("EFCore.Migrations.Toolkit.Tests.Models.Inheritance.ArticleBase");
+
+                    b.Property<string>("ContentB")
+                        .HasColumnType("text")
+                        .HasComment("Специфичное содержимое Б.");
+
+                    b.ToTable("ArticleB", t =>
+                        {
+                            t.HasComment("Наследник Б в TPT.");
+                        });
                 });
 
             modelBuilder.Entity("EFCore.Migrations.Toolkit.Tests.Models.Inheritance.PostA", b =>
@@ -161,6 +218,24 @@ namespace EFCore.Migrations.Toolkit.Tests.MigrationTests.PostgreSQL.Migrations
                         .HasComment("Текст Б.");
 
                     b.HasDiscriminator().HasValue("PostB");
+                });
+
+            modelBuilder.Entity("EFCore.Migrations.Toolkit.Tests.Models.Inheritance.ArticleA", b =>
+                {
+                    b.HasOne("EFCore.Migrations.Toolkit.Tests.Models.Inheritance.ArticleBase", null)
+                        .WithOne()
+                        .HasForeignKey("EFCore.Migrations.Toolkit.Tests.Models.Inheritance.ArticleA", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("EFCore.Migrations.Toolkit.Tests.Models.Inheritance.ArticleB", b =>
+                {
+                    b.HasOne("EFCore.Migrations.Toolkit.Tests.Models.Inheritance.ArticleBase", null)
+                        .WithOne()
+                        .HasForeignKey("EFCore.Migrations.Toolkit.Tests.Models.Inheritance.ArticleB", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

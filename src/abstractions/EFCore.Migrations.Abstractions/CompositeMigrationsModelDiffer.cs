@@ -13,25 +13,46 @@ using Microsoft.EntityFrameworkCore.Update.Internal;
 
 namespace EFCore.Migrations.Abstractions;
 
-public class CompositeMigrationsModelDiffer : MigrationsModelDiffer
+public class CompositeMigrationsModelDiffer : IMigrationsModelDiffer
 {
+    private readonly IMigrationsModelDiffer _baseDiffer;
+
     private readonly IReadOnlyList<IMigrationOperationModifier> _modifiers;
 
-    public CompositeMigrationsModelDiffer(IRelationalTypeMappingSource typeMappingSource,
-        IMigrationsAnnotationProvider migrationsAnnotations, IChangeDetector changeDetector,
-        IUpdateAdapterFactory updateAdapterFactory,
+    public CompositeMigrationsModelDiffer(
+        IRelationalTypeMappingSource typeMappingSource,
+        IMigrationsAnnotationProvider migrationsAnnotationProvider,
+        IRowIdentityMapFactory rowIdentityMapFactory,
         CommandBatchPreparerDependencies commandBatchPreparerDependencies,
         IEnumerable<IMigrationOperationModifier> modifiers)
-        : base(typeMappingSource, migrationsAnnotations, changeDetector, updateAdapterFactory,
-            commandBatchPreparerDependencies)
     {
+        _baseDiffer = new MigrationsModelDiffer(typeMappingSource, migrationsAnnotationProvider,
+            rowIdentityMapFactory,
+            commandBatchPreparerDependencies);
+
         _modifiers = modifiers.ToList();
     }
 
-    public override IReadOnlyList<MigrationOperation> GetDifferences(IRelationalModel source,
-        IRelationalModel target)
+    public bool HasDifferences(IRelationalModel source, IRelationalModel target)
     {
-        var operations = base.GetDifferences(source, target);
+        if (_baseDiffer.HasDifferences(source, target))
+        {
+            return true;
+        }
+
+        var operations = _baseDiffer.GetDifferences(source, target);
+
+        foreach (var modifier in _modifiers)
+        {
+            operations = modifier.ModifyOperations(operations, source, target);
+        }
+
+        return operations.Any();
+    }
+
+    public IReadOnlyList<MigrationOperation> GetDifferences(IRelationalModel source, IRelationalModel target)
+    {
+        var operations = _baseDiffer.GetDifferences(source, target);
 
         foreach (var modifier in _modifiers)
         {

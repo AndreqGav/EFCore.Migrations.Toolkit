@@ -16,12 +16,12 @@ namespace EFCore.Migrations.Toolkit.Tests.MigrationTests.SqlServer.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.36")
+                .HasAnnotation("ProductVersion", "7.0.20")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlDown:get_blog_name", "DROP PROCEDURE IF EXISTS [get_blog_name]")
                 .HasAnnotation("SqlUp:get_blog_name", "CREATE OR ALTER PROCEDURE [get_blog_name] @id INT AS SELECT [Name] FROM [Blogs] WHERE [Id] = @id");
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
             modelBuilder.Entity("EFCore.Migrations.Toolkit.Tests.Models.Blog", b =>
                 {
@@ -29,7 +29,7 @@ namespace EFCore.Migrations.Toolkit.Tests.MigrationTests.SqlServer.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
@@ -39,7 +39,10 @@ namespace EFCore.Migrations.Toolkit.Tests.MigrationTests.SqlServer.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Blogs");
+                    b.ToTable("Blogs", t =>
+                        {
+                            t.HasTrigger("trg_blog_log_changes");
+                        });
 
                     b
                         .HasAnnotation("SqlDown:trg_blog_log_changes", "DROP TRIGGER [trg_blog_log_changes];")
@@ -57,7 +60,9 @@ namespace EFCore.Migrations.Toolkit.Tests.MigrationTests.SqlServer.Migrations
                     b.Property<string>("Url")
                         .HasColumnType("nvarchar(max)");
 
-                    b.ToView("blog_view");
+                    b.ToTable((string)null);
+
+                    b.ToView("blog_view", (string)null);
 
                     b
                         .HasAnnotation("SqlDown:blog_view", "DROP VIEW IF EXISTS blog_view")
@@ -70,7 +75,7 @@ namespace EFCore.Migrations.Toolkit.Tests.MigrationTests.SqlServer.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Discriminator")
                         .IsRequired()
@@ -81,6 +86,8 @@ namespace EFCore.Migrations.Toolkit.Tests.MigrationTests.SqlServer.Migrations
                     b.ToTable("PostBase");
 
                     b.HasDiscriminator<string>("Discriminator").HasValue("PostBase");
+
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("EFCore.Migrations.Toolkit.Tests.Models.Order", b =>
@@ -89,7 +96,7 @@ namespace EFCore.Migrations.Toolkit.Tests.MigrationTests.SqlServer.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("Category")
                         .HasColumnType("int");
@@ -111,7 +118,12 @@ namespace EFCore.Migrations.Toolkit.Tests.MigrationTests.SqlServer.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Orders");
+                    b.ToTable("Orders", t =>
+                        {
+                            t.HasTrigger("trg_order_prevent_negative_amount");
+
+                            t.HasTrigger("trg_order_set_confirmed");
+                        });
 
                     b
                         .HasAnnotation("SqlDown:trg_order_prevent_negative_amount", "DROP TRIGGER [trg_order_prevent_negative_amount];")

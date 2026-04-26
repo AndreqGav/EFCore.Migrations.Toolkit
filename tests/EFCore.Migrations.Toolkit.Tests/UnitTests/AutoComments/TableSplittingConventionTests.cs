@@ -139,8 +139,7 @@ internal sealed class ManualCommentSplitContext : DbContext
             builder.HasOne(p => p.Details)
                 .WithOne()
                 .HasForeignKey<ProductDetails>(d => d.Id);
-            builder.HasComment("Ручной комментарий.");
-            builder.ToTable("Products");
+            builder.ToTable("Products", t => t.HasComment("Ручной комментарий."));
         });
 
         modelBuilder.Entity<ProductDetails>(builder =>

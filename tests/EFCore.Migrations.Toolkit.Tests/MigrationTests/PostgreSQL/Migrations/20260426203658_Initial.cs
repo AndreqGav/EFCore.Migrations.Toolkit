@@ -5,10 +5,25 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace EFCore.Migrations.Toolkit.Tests.MigrationTests.PostgreSQL.Migrations
 {
+    /// <inheritdoc />
     public partial class Initial : Migration
     {
+        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "ArticleBase",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false, comment: "Идентификатор.")
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ArticleBase", x => x.Id);
+                },
+                comment: "Базовый тип в наследовании TPT.");
+
             migrationBuilder.CreateTable(
                 name: "Blogs",
                 columns: table => new
@@ -59,6 +74,44 @@ namespace EFCore.Migrations.Toolkit.Tests.MigrationTests.PostgreSQL.Migrations
                 },
                 comment: "Базовый тип в наследовании TPH.");
 
+            migrationBuilder.CreateTable(
+                name: "ArticleA",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false, comment: "Идентификатор."),
+                    ContentA = table.Column<string>(type: "text", nullable: true, comment: "Специфичное содержимое А.")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ArticleA", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ArticleA_ArticleBase_Id",
+                        column: x => x.Id,
+                        principalTable: "ArticleBase",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                },
+                comment: "Наследник А в TPT.");
+
+            migrationBuilder.CreateTable(
+                name: "ArticleB",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false, comment: "Идентификатор."),
+                    ContentB = table.Column<string>(type: "text", nullable: true, comment: "Специфичное содержимое Б.")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ArticleB", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ArticleB_ArticleBase_Id",
+                        column: x => x.Id,
+                        principalTable: "ArticleBase",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                },
+                comment: "Наследник Б в TPT.");
+
             migrationBuilder.Sql("CREATE OR REPLACE VIEW public.blog_names\nAS SELECT \"Id\", \"Name\" FROM \"Blogs\"");
 
             migrationBuilder.Sql("CREATE OR REPLACE FUNCTION GetName(id integer)\nRETURNS text AS $$\nBEGIN\nRETURN (SELECT \"Name\" FROM \"Blogs\" WHERE \"Id\" = id);\n END;\n$$ LANGUAGE plpgsql;");
@@ -72,6 +125,7 @@ namespace EFCore.Migrations.Toolkit.Tests.MigrationTests.PostgreSQL.Migrations
             migrationBuilder.Sql("CREATE FUNCTION set_order_defaults() RETURNS trigger as $set_order_defaults$\nBEGIN\nNEW.is_confirmed = false;\nRETURN NEW;\nEND;\n$set_order_defaults$ LANGUAGE plpgsql;\n\nCREATE TRIGGER set_order_defaults BEFORE INSERT\nON \"Orders\"\nFOR EACH ROW EXECUTE PROCEDURE set_order_defaults();");
         }
 
+        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.Sql("DROP VIEW IF EXISTS public.blog_names");
@@ -87,6 +141,12 @@ namespace EFCore.Migrations.Toolkit.Tests.MigrationTests.PostgreSQL.Migrations
             migrationBuilder.Sql("DROP FUNCTION set_order_defaults() CASCADE;");
 
             migrationBuilder.DropTable(
+                name: "ArticleA");
+
+            migrationBuilder.DropTable(
+                name: "ArticleB");
+
+            migrationBuilder.DropTable(
                 name: "Blogs");
 
             migrationBuilder.DropTable(
@@ -94,6 +154,9 @@ namespace EFCore.Migrations.Toolkit.Tests.MigrationTests.PostgreSQL.Migrations
 
             migrationBuilder.DropTable(
                 name: "PostBase");
+
+            migrationBuilder.DropTable(
+                name: "ArticleBase");
         }
     }
 }

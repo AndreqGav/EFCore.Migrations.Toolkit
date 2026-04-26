@@ -30,7 +30,7 @@ foreach ($p in $providers) {
 
     Write-Host "[2/2] Создаем новую миграцию Initial..." -ForegroundColor Yellow
     dotnet ef migrations add Initial `
-        --framework net6.0 `
+        --framework net7.0 `
         --project EFCore.Migrations.Toolkit.Tests `
         --context $p.Context `
         --output-dir $p.OutputDir

@@ -64,9 +64,7 @@ public abstract class CustomSqlGenerator
 
         var metadata = _modelBuilder.Entity<TEntity>().Metadata;
 
-        var tableName = metadata.GetTableName()!;
-        var schema = metadata.GetSchema()!;
-        var columnName = metadata.FindProperty(propertyName)?.GetColumnName(StoreObjectIdentifier.Table(tableName, schema));
+        var columnName = metadata.FindProperty(propertyName)?.GetColumnName();
 
         return columnName is not null ? _sqlGenerationHelper.DelimitIdentifier(columnName) : null;
     }

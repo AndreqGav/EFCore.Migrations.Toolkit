@@ -1,9 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFramework>net7.0</TargetFramework>
         <PackageId>EFCore.Migrations.Triggers.PostgreSQL</PackageId>
         <Title>Triggers.Postgresql</Title>
-        <Version>6.0.0</Version>
+        <Version>7.0.0</Version>
         <Authors>AndreqGav</Authors>
         <Product>EFCore.Migrations.Toolkit</Product>
         <Description>Managing the creation of triggers in the database postgresql through the EF migration mechanism.</Description>
@@ -17,7 +17,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.0" />
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.0" />
     </ItemGroup>
 
     <ItemGroup>
