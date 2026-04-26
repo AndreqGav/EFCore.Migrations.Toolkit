@@ -1,4 +1,4 @@
-$ProjectDir = Join-Path $PSScriptRoot "..\.."
+﻿$ProjectDir = Join-Path $PSScriptRoot "..\.."
 
 $providers = @(
     @{
@@ -30,7 +30,7 @@ foreach ($p in $providers) {
 
     Write-Host "[2/2] Создаем новую миграцию Initial..." -ForegroundColor Yellow
     dotnet ef migrations add Initial `
-        --framework net10.0 `
+        --framework net5.0 `
         --project EFCore.Migrations.Toolkit.Tests `
         --context $p.Context `
         --output-dir $p.OutputDir

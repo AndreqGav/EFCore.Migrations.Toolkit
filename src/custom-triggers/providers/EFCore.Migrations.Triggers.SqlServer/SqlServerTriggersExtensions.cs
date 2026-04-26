@@ -150,10 +150,6 @@ namespace EFCore.Migrations.Triggers
             };
 
             entityTypeBuilder.AddTriggerAnnotation(trigger);
-
-#if NET7_0_OR_GREATER
-            entityTypeBuilder.Metadata.AddTrigger(name);
-#endif
         }
     }
 }

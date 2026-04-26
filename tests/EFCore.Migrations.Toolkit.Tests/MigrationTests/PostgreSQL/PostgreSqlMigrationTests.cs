@@ -13,8 +13,6 @@ namespace EFCore.Migrations.Toolkit.Tests.MigrationTests.PostgreSQL
     [Collection("PostgreSQL Database tests")]
     public class PostgreSqlMigrationTests
     {
-#if NET9_0_OR_GREATER
-
         [Fact]
         public void Migrations_Should_Apply_Successfully_And_Database_Be_Queryable()
         {
@@ -52,24 +50,24 @@ namespace EFCore.Migrations.Toolkit.Tests.MigrationTests.PostgreSQL
             var diffMessage = string.Empty;
             if (hasDifferences)
             {
-                var diffs = differences.Select(d => 
+                var diffs = differences.Select(d =>
                 {
                     // Если это SqlOperation, достаем сам SQL-код
                     if (d is Microsoft.EntityFrameworkCore.Migrations.Operations.SqlOperation sqlOp)
                     {
                         return $"SqlOperation: \n{sqlOp.Sql}\n(SuppressTransaction: {sqlOp.SuppressTransaction})";
                     }
+
                     return d.GetType().Name;
                 });
+
                 diffMessage = string.Join("\n\n", diffs);
             }
-            
+
             // Assert
             Assert.False(hasDifferences,
                 $"Обнаружены изменения ({differences.Count} шт.) в моделях DbContext, для которых не создана миграция.\nДетали:\n{diffMessage}\nВыполните 'dotnet ef migrations add'.");
         }
-
-#endif
 
         private IRelationalModel GetSourceRelationalModel(PostgreSqlMigrationDbContext context)
         {
@@ -78,19 +76,6 @@ namespace EFCore.Migrations.Toolkit.Tests.MigrationTests.PostgreSQL
 
             if (snapshotModel is null) return null;
 
-            var services = context.GetInfrastructure();
-
-#if NET6_0_OR_GREATER
-            if (snapshotModel is IMutableModel mutableModel)
-            {
-                snapshotModel = mutableModel.FinalizeModel();
-            }
-
-            var modelRuntimeInitializer = context.GetService<IModelRuntimeInitializer>();
-            snapshotModel = modelRuntimeInitializer.Initialize(snapshotModel);
-
-            return snapshotModel.GetRelationalModel();
-#else
             var dependencies = context.GetService<ProviderConventionSetBuilderDependencies>();
             var relationalDependencies = context.GetService<RelationalConventionSetBuilderDependencies>();
 
@@ -105,7 +90,6 @@ namespace EFCore.Migrations.Toolkit.Tests.MigrationTests.PostgreSQL
             var sourceModel = relationalModelConvention.ProcessModelFinalized(snapshotModel);
 
             return sourceModel.GetRelationalModel();
-#endif
         }
     }
 }

@@ -3,7 +3,6 @@ using System.Linq.Expressions;
 using EFCore.Migrations.CustomSql.Helpers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -64,13 +63,9 @@ namespace EFCore.Migrations.CustomSql.Abstractions
 
             var metadata = _modelBuilder.Entity<TEntity>().Metadata;
 
-#if NET6_0
-            var tableName = metadata.GetTableName()!;
-            var schema = metadata.GetSchema()!;
-            var columnName = metadata.FindProperty(propertyName)?.GetColumnName(StoreObjectIdentifier.Table(tableName, schema));
-#else
+#pragma warning disable CS0618 // Type or member is obsolete
             var columnName = metadata.FindProperty(propertyName)?.GetColumnName();
-#endif
+#pragma warning restore CS0618 // Type or member is obsolete
 
             return columnName is not null ? _sqlGenerationHelper.DelimitIdentifier(columnName) : null;
         }

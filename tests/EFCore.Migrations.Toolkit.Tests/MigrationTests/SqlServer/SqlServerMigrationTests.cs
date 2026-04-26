@@ -3,6 +3,8 @@ using EFCore.Migrations.Toolkit.Tests.Helpers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Metadata.Conventions;
+using Microsoft.EntityFrameworkCore.Metadata.Conventions.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Xunit;
 
@@ -11,8 +13,6 @@ namespace EFCore.Migrations.Toolkit.Tests.MigrationTests.SqlServer
     [Collection("SqlServer Database tests")]
     public class SqlServerMigrationTests
     {
-#if NET9_0_OR_GREATER
-
         [Fact]
         public void Migrations_Should_Apply_Successfully_And_Database_Be_Queryable()
         {
@@ -68,8 +68,6 @@ namespace EFCore.Migrations.Toolkit.Tests.MigrationTests.SqlServer
                 $"Обнаружены изменения ({differences.Count} шт.) в моделях DbContext, для которых не создана миграция.\nДетали:\n{diffMessage}\nВыполните 'dotnet ef migrations add'.");
         }
 
-#endif
-
         private IRelationalModel GetSourceRelationalModel(SqlServerMigrationDbContext context)
         {
             var migrationsAssembly = context.GetService<IMigrationsAssembly>();
@@ -77,35 +75,20 @@ namespace EFCore.Migrations.Toolkit.Tests.MigrationTests.SqlServer
 
             if (snapshotModel is null) return null;
 
-#if NET6_0_OR_GREATER
-            if (snapshotModel is IMutableModel mutableModel)
-            {
-                snapshotModel = mutableModel.FinalizeModel();
-            }
-
-            var modelRuntimeInitializer = context.GetService<IModelRuntimeInitializer>();
-            snapshotModel = modelRuntimeInitializer.Initialize(snapshotModel);
-
-            return snapshotModel.GetRelationalModel();
-#else
-            var dependencies =
- context.GetService<Microsoft.EntityFrameworkCore.Metadata.Conventions.Infrastructure.ProviderConventionSetBuilderDependencies>();
-            var relationalDependencies =
- context.GetService<Microsoft.EntityFrameworkCore.Metadata.Conventions.Infrastructure.RelationalConventionSetBuilderDependencies>();
+            var dependencies = context.GetService<ProviderConventionSetBuilderDependencies>();
+            var relationalDependencies = context.GetService<RelationalConventionSetBuilderDependencies>();
 
             if (migrationsAssembly.ModelSnapshot != null)
             {
-                var typeMappingConvention = new Microsoft.EntityFrameworkCore.Metadata.Conventions.TypeMappingConvention(dependencies);
+                var typeMappingConvention = new TypeMappingConvention(dependencies);
                 typeMappingConvention.ProcessModelFinalizing(
                     ((IConventionModel)migrationsAssembly.ModelSnapshot.Model).Builder, null);
             }
 
-            var relationalModelConvention =
- new Microsoft.EntityFrameworkCore.Metadata.Conventions.RelationalModelConvention(dependencies, relationalDependencies);
+            var relationalModelConvention = new RelationalModelConvention(dependencies, relationalDependencies);
             var sourceModel = relationalModelConvention.ProcessModelFinalized(snapshotModel);
 
             return sourceModel.GetRelationalModel();
-#endif
         }
     }
 }

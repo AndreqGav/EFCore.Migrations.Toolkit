@@ -58,13 +58,7 @@ namespace EFCore.Migrations.AutoComments
 
         public override bool IsDatabaseProvider => false;
 
-#if NET6_0_OR_GREATER
-        public override bool ShouldUseSameServiceProvider(DbContextOptionsExtensionInfo other) => other is AutoCommentsExtensionInfo;
-
-        public override int GetServiceProviderHashCode() => CalculateHashCode();
-#else
         public override long GetServiceProviderHashCode() => CalculateHashCode();
-#endif
 
         private int CalculateHashCode()
         {

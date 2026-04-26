@@ -92,10 +92,6 @@ namespace EFCore.Migrations.Toolkit.Tests.MigrationTests.PostgreSQL
             modelBuilder.Entity<PostBase>(builder =>
             {
                 builder.HasKey(entity => entity.Id);
-
-#if NET7_0_OR_GREATER
-                builder.UseTphMappingStrategy();
-#endif
             });
 
             modelBuilder.Entity<PostA>(builder => builder.HasBaseType<PostBase>());
@@ -104,30 +100,10 @@ namespace EFCore.Migrations.Toolkit.Tests.MigrationTests.PostgreSQL
 
         private static void ConfigureTptInheritance(ModelBuilder modelBuilder)
         {
-#if NET7_0_OR_GREATER
-            modelBuilder.Entity<ArticleBase>(builder =>
-            {
-                builder.HasKey(entity => entity.Id);
-                builder.UseTptMappingStrategy();
-            });
-
-            modelBuilder.Entity<ArticleA>();
-            modelBuilder.Entity<ArticleB>();
-#endif
         }
 
         private static void ConfigureTpcInheritance(ModelBuilder modelBuilder)
         {
-#if NET8_0_OR_GREATER
-            modelBuilder.Entity<BlogBase>(builder =>
-            {
-                builder.HasKey(entity => entity.Id);
-                builder.UseTpcMappingStrategy();
-            });
-
-            modelBuilder.Entity<BlogA>();
-            modelBuilder.Entity<BlogB>();
-#endif
         }
     }
 }

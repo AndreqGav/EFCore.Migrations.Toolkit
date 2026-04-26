@@ -1,7 +1,6 @@
 using System.Linq;
 using EFCore.Migrations.CustomSql;
 using EFCore.Migrations.CustomSql.Constants;
-using EFCore.Migrations.CustomSql.Models;
 using EFCore.Migrations.Toolkit.Tests.Helpers;
 using EFCore.Migrations.Toolkit.Tests.Models;
 using Microsoft.EntityFrameworkCore;

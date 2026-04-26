@@ -218,12 +218,8 @@ namespace EFCore.Migrations.Toolkit.Tests.UnitTests.AutoComments
             // Ручной комментарий — конвенция не должна его перезаписывать
             modelBuilder.Entity<Blog>(builder =>
             {
-#if NET7_0_OR_GREATER
-                builder.ToTable("Blogs", t => t.HasComment("Блог (ручной комментарий)"));
-#else
                 builder.HasComment("Блог (ручной комментарий)");
                 builder.ToTable("Blogs");
-#endif
                 builder.Property(b => b.Url).HasComment("URL (ручной комментарий)");
             });
         }

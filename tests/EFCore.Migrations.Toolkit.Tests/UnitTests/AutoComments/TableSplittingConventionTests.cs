@@ -139,12 +139,8 @@ namespace EFCore.Migrations.Toolkit.Tests.UnitTests.AutoComments
                 builder.HasOne(p => p.Details)
                     .WithOne()
                     .HasForeignKey<ProductDetails>(d => d.Id);
-#if NET7_0_OR_GREATER
-                builder.ToTable("Products", t => t.HasComment("Ручной комментарий."));
-#else
                 builder.HasComment("Ручной комментарий.");
                 builder.ToTable("Products");
-#endif
             });
 
             modelBuilder.Entity<ProductDetails>(builder =>

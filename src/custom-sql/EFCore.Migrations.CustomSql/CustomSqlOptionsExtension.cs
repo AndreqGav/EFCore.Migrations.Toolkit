@@ -34,13 +34,7 @@ namespace EFCore.Migrations.CustomSql
         {
         }
 
-#if NET6_0_OR_GREATER
-        public override bool ShouldUseSameServiceProvider(DbContextOptionsExtensionInfo other) => other is CustomSqlExtensionInfo;
-
-        public override int GetServiceProviderHashCode() => 0;
-#else
         public override long GetServiceProviderHashCode() => 0;
-#endif
 
         public override void PopulateDebugInfo(IDictionary<string, string> debugInfo)
         {

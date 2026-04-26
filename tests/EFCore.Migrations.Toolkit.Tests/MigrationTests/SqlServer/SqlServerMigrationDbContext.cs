@@ -80,10 +80,6 @@ namespace EFCore.Migrations.Toolkit.Tests.MigrationTests.SqlServer
             modelBuilder.Entity<PostBase>(builder =>
             {
                 builder.HasKey(entity => entity.Id);
-
-#if NET7_0_OR_GREATER
-                builder.UseTphMappingStrategy();
-#endif
             });
 
             modelBuilder.Entity<PostA>(builder => builder.HasBaseType<PostBase>());
