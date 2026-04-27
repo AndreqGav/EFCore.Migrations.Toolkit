@@ -19,13 +19,17 @@ public static class DependencyInjection
         return optionsBuilder.UseAutoComments(o => o.FromXmlFiles(xmlFiles));
     }
 
-    public static TBuilder UseAutoComments<TBuilder>([NotNull] this TBuilder optionsBuilder, Action<AutoCommentOptions> configure)
+    public static TBuilder UseAutoComments<TBuilder>([NotNull] this TBuilder optionsBuilder, Action<AutoCommentOptionsBuilder> configure)
         where TBuilder : DbContextOptionsBuilder
     {
-        var options = new AutoCommentOptions();
-        configure.Invoke(options);
+        var extension = optionsBuilder.Options.FindExtension<AutoCommentsExtension>() ??
+                        new AutoCommentsExtension(new AutoCommentOptions());
 
-        var extension = new AutoCommentsOptionsExtension(options);
+        var builder = new AutoCommentOptionsBuilder(extension.Options);
+
+        configure?.Invoke(builder);
+
+        extension = new AutoCommentsExtension(builder.Options);
 
         ((IDbContextOptionsBuilderInfrastructure)optionsBuilder).AddOrUpdateExtension(extension);
 
@@ -33,27 +37,66 @@ public static class DependencyInjection
     }
 }
 
-public class AutoCommentOptions
+public record AutoCommentOptions
 {
-    internal string[] XmlFiles { get; set; } = Array.Empty<string>();
+    internal IReadOnlyList<string> XmlFiles { get; init; } = Array.Empty<string>();
 
-    internal bool AutoCommentEnumDescriptions { get; set; }
+    internal bool AutoCommentEnumDescriptions { get; init; }
+
+    internal bool CombineInheritanceComments { get; init; }
+
+    public override int GetHashCode()
+    {
+        var hash = new HashCode();
+        foreach (var item in XmlFiles)
+        {
+            hash.Add(item);
+        }
+
+        hash.Add(AutoCommentEnumDescriptions);
+        hash.Add(CombineInheritanceComments);
+
+        return hash.ToHashCode();
+    }
 }
 
-public static class AutoCommentOptionsExtensions
+public class AutoCommentOptionsBuilder
 {
-    public static AutoCommentOptions FromXmlFiles(this AutoCommentOptions options, params string[] xmlFiles)
-    {
-        options.XmlFiles = GetXmlFiles(xmlFiles).ToArray();
+    public AutoCommentOptions Options { get; private set; }
 
-        return options;
+    public AutoCommentOptionsBuilder(AutoCommentOptions initialOptions)
+    {
+        Options = initialOptions;
     }
 
-    public static AutoCommentOptions AddEnumDescriptions(this AutoCommentOptions options)
+    public AutoCommentOptionsBuilder FromXmlFiles(params string[] xmlFiles)
     {
-        options.AutoCommentEnumDescriptions = true;
+        Options = Options with
+        {
+            XmlFiles = GetXmlFiles(xmlFiles).ToList()
+        };
 
-        return options;
+        return this;
+    }
+
+    public AutoCommentOptionsBuilder AddEnumDescriptions()
+    {
+        Options = Options with
+        {
+            AutoCommentEnumDescriptions = true
+        };
+
+        return this;
+    }
+
+    public AutoCommentOptionsBuilder AddInheritanceComments()
+    {
+        Options = Options with
+        {
+            CombineInheritanceComments = true
+        };
+
+        return this;
     }
 
     private static IEnumerable<string> GetXmlFiles(string[] xmlFiles)
