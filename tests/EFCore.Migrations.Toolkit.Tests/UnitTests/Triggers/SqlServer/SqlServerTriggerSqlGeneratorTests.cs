@@ -18,12 +18,14 @@ public class SqlServerTriggerSqlGeneratorTests
     private static SqlServerTriggerObject MakeTrigger(
         string name = "my_trigger",
         string table = "my_table",
+        string schema = null,
         TriggerOperationEnum operation = TriggerOperationEnum.Insert,
         TriggerTimeEnum time = TriggerTimeEnum.After,
         string body = "PERFORM 1;")
         => new SqlServerTriggerObject
         {
             Name = name,
+            Schema = schema,
             Table = table,
             Operation = operation,
             Time = time,
@@ -294,5 +296,32 @@ public class SqlServerTriggerSqlGeneratorTests
         Assert.DoesNotContain("\r", sql);
         Assert.DoesNotContain("\r\n", sql);
         Assert.Contains("line1;\nline2;", sql);
+    }
+
+    [Fact]
+    public void GenerateCreateTriggerSql_WithSchema_Should_ContainQualifiedTableName()
+    {
+        // Arrange
+        var trigger = MakeTrigger(table: "Orders", schema: "dbo");
+
+        // Act
+        var sql = _generator.GenerateCreateTriggerSql(trigger);
+
+        // Assert
+        Assert.Contains("ON \"dbo\".\"Orders\"", sql);
+    }
+
+    [Fact]
+    public void GenerateCreateTriggerSql_WithoutSchema_Should_ContainUnqualifiedTableName()
+    {
+        // Arrange
+        var trigger = MakeTrigger(table: "Orders", schema: null);
+
+        // Act
+        var sql = _generator.GenerateCreateTriggerSql(trigger);
+
+        // Assert
+        Assert.Contains("ON \"Orders\"", sql);
+        Assert.DoesNotContain("null", sql);
     }
 }
