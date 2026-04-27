@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using EFCore.Migrations.AutoComments.Conventions;
@@ -14,17 +13,13 @@ namespace EFCore.Migrations.AutoComments;
 /// Расширение, которое позволяет передать и сохранить пути до XML файлов с комментариями.
 /// Также регистрирует плагин установки конвенций.
 /// </summary>
-internal class AutoCommentsOptionsExtension : IDbContextOptionsExtension
+internal class AutoCommentsExtension : IDbContextOptionsExtension
 {
-    public string[] XmlFiles { get; }
+    public AutoCommentOptions Options { get; }
 
-    public bool AutoCommentEnumDescriptions { get; set; }
-
-    public AutoCommentsOptionsExtension(AutoCommentOptions autoCommentOptions)
+    public AutoCommentsExtension(AutoCommentOptions options)
     {
-        XmlFiles = autoCommentOptions.XmlFiles;
-        AutoCommentEnumDescriptions = autoCommentOptions.AutoCommentEnumDescriptions;
-
+        Options = options;
         Info = new AutoCommentsExtensionInfo(this);
     }
 
@@ -38,7 +33,7 @@ internal class AutoCommentsOptionsExtension : IDbContextOptionsExtension
 
     public void Validate(IDbContextOptions options)
     {
-        foreach (var xmlPath in XmlFiles)
+        foreach (var xmlPath in Options.XmlFiles)
         {
             if (!File.Exists(xmlPath))
             {
@@ -60,22 +55,9 @@ public class AutoCommentsExtensionInfo : DbContextOptionsExtensionInfo
 
     public override bool ShouldUseSameServiceProvider(DbContextOptionsExtensionInfo other) => other is AutoCommentsExtensionInfo;
 
-    public override int GetServiceProviderHashCode() => CalculateHashCode();
+    public override int GetServiceProviderHashCode() => Extension.Options.GetHashCode();
 
-    private int CalculateHashCode()
-    {
-        var hash = new HashCode();
-        foreach (var item in Extension.XmlFiles)
-        {
-            hash.Add(item);
-        }
-
-        hash.Add(Extension.AutoCommentEnumDescriptions);
-
-        return hash.ToHashCode();
-    }
-
-    private new AutoCommentsOptionsExtension Extension => (AutoCommentsOptionsExtension)base.Extension;
+    private new AutoCommentsExtension Extension => (AutoCommentsExtension)base.Extension;
 
     public override string LogFragment
     {
@@ -85,7 +67,7 @@ public class AutoCommentsExtensionInfo : DbContextOptionsExtensionInfo
             {
                 var builder = new StringBuilder();
 
-                foreach (var xmlPath in Extension.XmlFiles)
+                foreach (var xmlPath in Extension.Options.XmlFiles)
                 {
                     builder.AppendJoin(' ', $"Used XML comments file: {xmlPath}");
                 }

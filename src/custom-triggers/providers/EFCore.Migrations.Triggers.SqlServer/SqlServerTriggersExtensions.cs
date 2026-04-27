@@ -139,10 +139,12 @@ public static class SqlServerTriggersExtensions
         where TEntity : class
     {
         var table = entityTypeBuilder.Metadata.GetTableName();
+        var schema = entityTypeBuilder.Metadata.GetSchema();
 
         var trigger = new SqlServerTriggerObject
         {
             Name = name,
+            Schema = schema,
             Table = table,
             Operation = operation,
             Time = time,
