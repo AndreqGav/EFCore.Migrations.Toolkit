@@ -122,10 +122,12 @@ public static class PostgreSqlTriggersExtensions
         where TEntity : class
     {
         var table = entityTypeBuilder.Metadata.GetTableName();
+        var schema = entityTypeBuilder.Metadata.GetSchema();
 
         var trigger = new PostgreSqlTriggerObject
         {
             Name = name,
+            Schema = schema,
             Table = table,
             Operation = operation,
             Time = time,

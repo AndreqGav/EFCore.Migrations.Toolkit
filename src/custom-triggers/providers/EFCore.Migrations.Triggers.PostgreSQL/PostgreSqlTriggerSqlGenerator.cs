@@ -23,7 +23,7 @@ public class PostgreSqlTriggerSqlGenerator : ITriggerSqlGenerator
         var trigger = (PostgreSqlTriggerObject)triggerObject;
 
         var name = _sqlGenerationHelper.DelimitIdentifier(trigger.Name);
-        var tableName = _sqlGenerationHelper.DelimitIdentifier(trigger.Table);
+        var tableName = _sqlGenerationHelper.DelimitIdentifier(trigger.Table, trigger.Schema);
 
         var builder = new StringBuilder();
         builder.AppendLine($"CREATE FUNCTION {name}() RETURNS trigger as ${trigger.Name}$");

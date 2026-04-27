@@ -174,7 +174,7 @@ public class XmlCommentsReaderTests
     [Fact]
     public void GetTypeComment_Should_TrimLeadingAndTrailingWhitespace()
     {
-        // Arrange — сводка с пробелами вокруг текста
+        // Arrange
         var xml = BuildXml((TypeMember(typeof(SampleModel)), "  Тестовая модель.  "));
         var reader = CreateReader(xml);
 
@@ -188,7 +188,7 @@ public class XmlCommentsReaderTests
     [Fact]
     public void GetTypeComment_Should_NormalizeMultilineText()
     {
-        // Arrange — многострочная сводка: каждая строка обрезается, строки объединяются через \n
+        // Arrange
         var xml = BuildXml((TypeMember(typeof(SampleModel)), "\n  Строка первая.  \n  Строка вторая.  \n"));
         var reader = CreateReader(xml);
 
@@ -216,11 +216,11 @@ public class XmlCommentsReaderTests
     [Fact]
     public void GetTypeComment_Should_ReturnBaseClassComment_WhenDerivedClassNotInXml()
     {
-        // Arrange — в XML есть запись для BaseModel, но не для DerivedModel
+        // Arrange
         var xml = BuildXml((TypeMember(typeof(BaseModel)), "Базовая модель."));
         var reader = CreateReader(xml);
 
-        // Act — DerivedModel наследует BaseModel, читатель идёт по цепочке наследования
+        // Act
         var comment = reader.GetTypeComment(typeof(DerivedModel));
 
         // Assert
@@ -230,7 +230,7 @@ public class XmlCommentsReaderTests
     [Fact]
     public void GetTypeComment_Should_PreferDerivedClassComment_OverBaseClass()
     {
-        // Arrange — в XML есть записи для обоих типов
+        // Arrange
         var xml = BuildXml(
             (TypeMember(typeof(DerivedModel)), "Производная модель."),
             (TypeMember(typeof(BaseModel)), "Базовая модель."));
@@ -240,7 +240,7 @@ public class XmlCommentsReaderTests
         // Act
         var comment = reader.GetTypeComment(typeof(DerivedModel));
 
-        // Assert — производный класс имеет приоритет
+        // Assert
         Assert.Equal("Производная модель.", comment);
     }
 
@@ -301,11 +301,11 @@ public class XmlCommentsReaderTests
     [Fact]
     public void GetPropertyComment_Should_FindPropertyComment_InBaseClass()
     {
-        // Arrange — BaseProperty задокументирован для BaseModel, не для DerivedModel
+        // Arrange
         var xml = BuildXml((PropertyMember(typeof(BaseModel), nameof(BaseModel.BaseProperty)), "Базовое свойство."));
         var reader = CreateReader(xml);
 
-        // Act — обращаемся через DerivedModel, читатель идёт по цепочке наследования
+        // Act
         var comment = reader.GetPropertyComment(typeof(DerivedModel), nameof(BaseModel.BaseProperty));
 
         // Assert
@@ -315,7 +315,7 @@ public class XmlCommentsReaderTests
     [Fact]
     public void GetPropertyComment_Should_ReturnNull_FromXmlFile_WhenTypeNotInXmlAtAll()
     {
-        // Arrange — XML полностью пустой
+        // Arrange
         var xml = BuildXml();
         var reader = CreateReader(xml);
 

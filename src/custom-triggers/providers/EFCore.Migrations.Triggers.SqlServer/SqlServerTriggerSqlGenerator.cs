@@ -23,7 +23,7 @@ public class SqlServerTriggerSqlGenerator : ITriggerSqlGenerator
         var trigger = (SqlServerTriggerObject)triggerObject;
 
         var name = _sqlGenerationHelper.DelimitIdentifier(trigger.Name);
-        var tableName = _sqlGenerationHelper.DelimitIdentifier(trigger.Table);
+        var tableName = _sqlGenerationHelper.DelimitIdentifier(trigger.Table, trigger.Schema);
 
         var builder = new StringBuilder();
         builder.AppendLine($"CREATE OR ALTER TRIGGER {name}");
