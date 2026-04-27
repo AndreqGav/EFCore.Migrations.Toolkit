@@ -25,10 +25,10 @@ public class AutoCommentsConventionTests
         return builder.Options;
     }
 
-    private static string GetTableComment<TEntity>(AutoCommentsContext context)
+    private static string GetTableComment<TEntity>(DbContext context)
         => ModelAccessor.GetModel(context).FindEntityType(typeof(TEntity))!.GetComment();
 
-    private static string GetColumnComment<TEntity>(AutoCommentsContext context, string propertyName)
+    private static string GetColumnComment<TEntity>(DbContext context, string propertyName)
         => ModelAccessor.GetModel(context)
             .FindEntityType(typeof(TEntity))!
             .FindProperty(propertyName)!
@@ -136,7 +136,7 @@ public class AutoCommentsConventionTests
     [Fact]
     public void AutoComments_Should_NotOverwrite_ManualTableComment()
     {
-        // Arrange — у Blog задан ручной комментарий в OnModelCreating
+        // Arrange
         using var context = new AutoCommentsContext(BuildOptions());
 
         // Act
@@ -200,7 +200,7 @@ internal sealed class AutoCommentsContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        // Представление — конвенция автокомментариев должна его пропускать
+        // Представление - конвенция автокомментариев должна его пропускать
         modelBuilder.Entity<OrderCatalogView>(builder =>
         {
             builder.HasNoKey();
@@ -215,7 +215,7 @@ internal sealed class AutoCommentsContext : DbContext
 
         modelBuilder.Entity<Order>(builder => builder.Property(e => e.Category).HasConversion<string>());
 
-        // Ручной комментарий — конвенция не должна его перезаписывать
+        // Ручной комментарий - конвенция не должна его перезаписывать
         modelBuilder.Entity<Blog>(builder =>
         {
             builder.ToTable("Blogs", t => t.HasComment("Блог (ручной комментарий)"));

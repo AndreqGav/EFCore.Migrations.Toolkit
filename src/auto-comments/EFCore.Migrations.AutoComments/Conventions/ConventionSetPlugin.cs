@@ -7,19 +7,19 @@ namespace EFCore.Migrations.AutoComments.Conventions;
 
 public class ConventionSetPlugin : IConventionSetPlugin
 {
-    private readonly AutoCommentsOptionsExtension _extension;
+    private readonly AutoCommentsExtension _extension;
 
     public ConventionSetPlugin([NotNull] IDbContextOptions options)
     {
-        _extension = options.FindExtension<AutoCommentsOptionsExtension>()!;
+        _extension = options.FindExtension<AutoCommentsExtension>()!;
     }
 
     public ConventionSet ModifyConventions(ConventionSet conventionSet)
     {
-        var enumAnnotationConvention = new AutoCommentEnumDescriptionConvention(_extension.AutoCommentEnumDescriptions);
+        var enumAnnotationConvention = new AutoCommentEnumDescriptionConvention(_extension.Options.AutoCommentEnumDescriptions);
         conventionSet.ModelFinalizingConventions.Add(enumAnnotationConvention);
 
-        var autoCommentsConvention = new AutoCommentsConvention(_extension.XmlFiles);
+        var autoCommentsConvention = new AutoCommentsConvention(_extension.Options);
         conventionSet.ModelFinalizingConventions.Add(autoCommentsConvention);
 
         return conventionSet;

@@ -18,6 +18,7 @@ public class PostgreSqlTriggerSqlGeneratorTests
     private static PostgreSqlTriggerObject MakeTrigger(
         string name = "my_trigger",
         string table = "my_table",
+        string schema = null,
         TriggerOperationEnum operation = TriggerOperationEnum.Insert,
         TriggerTimeEnum time = TriggerTimeEnum.Before,
         string body = "PERFORM 1;",
@@ -25,6 +26,7 @@ public class PostgreSqlTriggerSqlGeneratorTests
         => new PostgreSqlTriggerObject
         {
             Name = name,
+            Schema = schema,
             Table = table,
             Operation = operation,
             Time = time,
@@ -330,5 +332,32 @@ public class PostgreSqlTriggerSqlGeneratorTests
         Assert.DoesNotContain("\r", sql);
         Assert.DoesNotContain("\r\n", sql);
         Assert.Contains("line1;\nline2;", sql);
+    }
+
+    [Fact]
+    public void GenerateCreateTriggerSql_WithSchema_Should_ContainQualifiedTableName()
+    {
+        // Arrange
+        var trigger = MakeTrigger(table: "orders", schema: "public");
+
+        // Act
+        var sql = _generator.GenerateCreateTriggerSql(trigger);
+
+        // Assert
+        Assert.Contains("ON \"public\".\"orders\"", sql);
+    }
+
+    [Fact]
+    public void GenerateCreateTriggerSql_WithoutSchema_Should_ContainUnqualifiedTableName()
+    {
+        // Arrange
+        var trigger = MakeTrigger(table: "orders", schema: null);
+
+        // Act
+        var sql = _generator.GenerateCreateTriggerSql(trigger);
+
+        // Assert
+        Assert.Contains("ON \"orders\"", sql);
+        Assert.DoesNotContain("null", sql);
     }
 }

@@ -73,7 +73,7 @@ options.UseAutoComments();
 // Single file
 options.UseAutoComments("MyApp.xml");
 
-// Multiple files — merges docs from several assemblies
+// Multiple files - merges docs from several assemblies
 options.UseAutoComments("MyApp.xml", "SharedLibrary.xml");
 ```
 
