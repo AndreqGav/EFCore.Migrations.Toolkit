@@ -114,7 +114,7 @@ public class CustomSqlMigrationOperationModifierTests
     [Fact]
     public void ModifyOperations_Should_PlacePassthroughOps_BeforeCreateOperations()
     {
-        // Arrange — passthrough-операция (например, ALTER TABLE) идёт между удалением и созданием
+        // Arrange
         using var emptyContext = new EmptyCustomSqlContext(BuildOptions<EmptyCustomSqlContext>());
         using var sqlContext = new CustomSqlContext(BuildOptions<CustomSqlContext>());
 
@@ -134,7 +134,7 @@ public class CustomSqlMigrationOperationModifierTests
                 ModelAccessor.GetRelationalModel(sqlContext))
             .ToList();
 
-        // Assert — passthrough-операции идут до CREATE-операций
+        // Assert
         var passthroughIdx = operations.IndexOf(passthroughOp);
         var createIdx = operations.FindIndex(o => o is SqlOperation s && s.Sql == SqlUp);
         Assert.True(passthroughIdx >= 0);
