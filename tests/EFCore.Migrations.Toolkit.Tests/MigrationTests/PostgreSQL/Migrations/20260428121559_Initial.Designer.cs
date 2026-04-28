@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace EFCore.Migrations.Toolkit.Tests.MigrationTests.PostgreSQL.Migrations
 {
     [DbContext(typeof(PostgreSqlMigrationDbContext))]
-    [Migration("20260426212458_Initial")]
+    [Migration("20260428121559_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -254,6 +254,11 @@ namespace EFCore.Migrations.Toolkit.Tests.MigrationTests.PostgreSQL.Migrations
                         .HasColumnType("text")
                         .HasComment("Текст А.");
 
+                    b.ToTable(t =>
+                        {
+                            t.HasComment("Базовый тип в наследовании TPH.");
+                        });
+
                     b.HasDiscriminator().HasValue("PostA");
                 });
 
@@ -264,6 +269,11 @@ namespace EFCore.Migrations.Toolkit.Tests.MigrationTests.PostgreSQL.Migrations
                     b.Property<string>("TextB")
                         .HasColumnType("text")
                         .HasComment("Текст Б.");
+
+                    b.ToTable(t =>
+                        {
+                            t.HasComment("Базовый тип в наследовании TPH.");
+                        });
 
                     b.HasDiscriminator().HasValue("PostB");
                 });

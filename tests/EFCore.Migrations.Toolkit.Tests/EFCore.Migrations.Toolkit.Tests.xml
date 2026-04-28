@@ -86,6 +86,21 @@
             Представление блога.
             </summary>
         </member>
+        <member name="P:EFCore.Migrations.Toolkit.Tests.Models.BlogView.Id">
+            <summary>
+            Идентификатор.
+            </summary>
+        </member>
+        <member name="P:EFCore.Migrations.Toolkit.Tests.Models.BlogView.Name">
+            <summary>
+            Наименование.
+            </summary>
+        </member>
+        <member name="P:EFCore.Migrations.Toolkit.Tests.Models.BlogView.Url">
+            <summary>
+            URL.
+            </summary>
+        </member>
         <member name="T:EFCore.Migrations.Toolkit.Tests.Models.Inheritance.ArticleBase">
             <summary>
             Базовый тип в наследовании TPT.
