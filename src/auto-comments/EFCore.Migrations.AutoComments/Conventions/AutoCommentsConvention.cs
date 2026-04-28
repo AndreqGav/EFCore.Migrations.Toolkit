@@ -171,6 +171,8 @@ internal class AutoCommentsConvention : IModelFinalizingConvention
 
         foreach (var entityType in allEntityTypes)
         {
+            if (entityType.GetTableName() is null) continue;
+
             foreach (var property in entityType.GetProperties())
             {
                 HandleProperty(property);
@@ -264,7 +266,8 @@ internal class AutoCommentsConvention : IModelFinalizingConvention
 
         void MergeTphComments(IConventionProperty entityProperty)
         {
-            if (GetRootEntityType(entityProperty.DeclaringType).GetMappingStrategy() != RelationalAnnotationNames.TphMappingStrategy) return;
+            if (GetRootEntityType(entityProperty.DeclaringType).GetMappingStrategy() !=
+                RelationalAnnotationNames.TphMappingStrategy) return;
 
             var root = GetRootEntityType(entityProperty.DeclaringType);
 
@@ -335,6 +338,8 @@ internal class AutoCommentsConvention : IModelFinalizingConvention
 
     private static bool HasSameTable(IConventionTypeBase entityTypeA, IConventionTypeBase entityTypeB)
     {
+        if (entityTypeA.GetTableName() is null) return false;
+
         return entityTypeA.GetTableName() == entityTypeB.GetTableName() && entityTypeB.GetSchema() == entityTypeA.GetSchema();
     }
 
