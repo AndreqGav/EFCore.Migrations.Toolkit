@@ -19,6 +19,18 @@
             Интеграционные тесты PostgreSQL.
             </summary>
         </member>
+        <member name="T:EFCore.Migrations.Toolkit.Tests.MigrationTests.PostgreSQL.Migrations.Initial">
+            <inheritdoc />
+        </member>
+        <member name="M:EFCore.Migrations.Toolkit.Tests.MigrationTests.PostgreSQL.Migrations.Initial.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:EFCore.Migrations.Toolkit.Tests.MigrationTests.PostgreSQL.Migrations.Initial.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:EFCore.Migrations.Toolkit.Tests.MigrationTests.PostgreSQL.Migrations.Initial.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
         <member name="T:EFCore.Migrations.Toolkit.Tests.MigrationTests.PostgreSQL.Sql.BlogFunctionSql">
             <summary>
             SQL-определение пользовательской функции get_blog_name и её удаления.
