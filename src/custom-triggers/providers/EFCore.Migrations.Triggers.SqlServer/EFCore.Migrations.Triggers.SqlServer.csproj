@@ -3,7 +3,7 @@
         <TargetFramework>net7.0</TargetFramework>
         <PackageId>EFCore.Migrations.Triggers.SqlServer</PackageId>
         <Title>Triggers.SqlServer</Title>
-        <Version>7.0.0</Version>
+        <Version>7.0.1</Version>
         <Authors>AndreqGav</Authors>
         <Product>EFCore.Migrations.Toolkit</Product>
         <Description>Managing the creation of triggers in the database sqlServer through the EF migration mechanism.</Description>
