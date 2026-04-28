@@ -171,6 +171,19 @@ public class AutoCommentsConventionTests
         // Assert
         Assert.Null(comment);
     }
+    
+    [Fact]
+    public void AutoComments_Should_SkipViewColumns_AndNotSetComments()
+    {
+        // Arrange
+        using var context = new AutoCommentsContext(BuildOptions());
+
+        // Act
+        var comment = GetColumnComment<OrderCatalogView>(context, nameof(OrderCatalogView.Number));
+
+        // Assert
+        Assert.Null(comment);
+    }
 
     [Fact]
     public void AutoComments_Should_SkipSqlQuery_AndNotSetComment()
@@ -180,6 +193,19 @@ public class AutoCommentsConventionTests
 
         // Act
         var comment = GetTableComment<OrderCatalogSqlQuery>(context);
+
+        // Assert
+        Assert.Null(comment);
+    }
+    
+    [Fact]
+    public void AutoComments_Should_SkipSqlQueryColumns_AndNotSetComments()
+    {
+        // Arrange
+        using var context = new AutoCommentsContext(BuildOptions());
+
+        // Act
+        var comment = GetColumnComment<OrderCatalogSqlQuery>(context, nameof(OrderCatalogSqlQuery.TotalAmount));
 
         // Assert
         Assert.Null(comment);
