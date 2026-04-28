@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace EFCore.Migrations.Toolkit.Tests.MigrationTests.PostgreSQL.Migrations
 {
     [DbContext(typeof(PostgreSqlMigrationDbContext))]
-    [Migration("20260428115859_Initial")]
+    [Migration("20260428150035_Initial")]
     partial class Initial
     {
         /// <inheritdoc />

@@ -27,6 +27,25 @@ public class ComplexPropertyConventionTests
     private static IProperty GetProperty(IComplexProperty complexProperty, string propertyName)
         => complexProperty.ComplexType.FindProperty(propertyName);
 
+    private static string GetEntityPropertyComment<TEntity>(DbContext context, string propertyName)
+        => ModelAccessor.GetModel(context).FindEntityType(typeof(TEntity))!.FindProperty(propertyName)!.GetComment();
+
+    [Fact]
+    public void AutoComments_OwnerAndComplex_SamePropertyName_Should_SetDistinctComments()
+    {
+        // Arrange
+        using var context = new OwnerAndComplexSharedPropertyNameContext(BuildOptions<OwnerAndComplexSharedPropertyNameContext>());
+
+        // Act
+        var ownerNameComment = GetEntityPropertyComment<Product>(context, nameof(Product.Name));
+        var specProp = GetComplexProperty<Product>(context, nameof(Product.Spec));
+        var complexNameComment = GetProperty(specProp, nameof(ProductSpec.Name)).GetComment();
+
+        // Assert
+        Assert.Equal("Название продукта.", ownerNameComment);
+        Assert.Equal("Название характеристики.", complexNameComment);
+    }
+
     [Fact]
     public void AutoComments_ComplexType_ManualPropertyComment_Should_PreserveManualComment()
     {
@@ -102,6 +121,25 @@ public class ComplexPropertyConventionTests
         // Assert
         Assert.Equal("Телефон.", GetProperty(contactProp, nameof(ContactInfo.Phone))!.GetComment());
         Assert.Equal("Email.", GetProperty(contactProp, nameof(ContactInfo.Email))!.GetComment());
+    }
+}
+
+internal sealed class OwnerAndComplexSharedPropertyNameContext : DbContext
+{
+    public DbSet<Product> Products { get; set; }
+
+    public OwnerAndComplexSharedPropertyNameContext(DbContextOptions<OwnerAndComplexSharedPropertyNameContext> options)
+        : base(options)
+    {
+    }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Product>(builder =>
+        {
+            builder.HasKey(e => e.Id);
+            builder.ComplexProperty(p => p.Spec, c => c.IsRequired());
+        });
     }
 }
 
