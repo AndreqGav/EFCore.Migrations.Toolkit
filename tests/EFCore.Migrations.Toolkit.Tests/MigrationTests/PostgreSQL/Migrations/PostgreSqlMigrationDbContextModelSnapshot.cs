@@ -148,6 +148,8 @@ namespace EFCore.Migrations.Toolkit.Tests.MigrationTests.PostgreSQL.Migrations
                         .HasComment("Текст А.");
 
                     b.HasDiscriminator().HasValue("PostA");
+
+                    b.HasComment("Базовый тип в наследовании TPH.");
                 });
 
             modelBuilder.Entity("EFCore.Migrations.Toolkit.Tests.Models.Inheritance.PostB", b =>
@@ -159,6 +161,8 @@ namespace EFCore.Migrations.Toolkit.Tests.MigrationTests.PostgreSQL.Migrations
                         .HasComment("Текст Б.");
 
                     b.HasDiscriminator().HasValue("PostB");
+
+                    b.HasComment("Базовый тип в наследовании TPH.");
                 });
 #pragma warning restore 612, 618
         }

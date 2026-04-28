@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace EFCore.Migrations.Toolkit.Tests.MigrationTests.PostgreSQL.Migrations
 {
     [DbContext(typeof(PostgreSqlMigrationDbContext))]
-    [Migration("20260426200855_Initial")]
+    [Migration("20260428121249_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -150,6 +150,8 @@ namespace EFCore.Migrations.Toolkit.Tests.MigrationTests.PostgreSQL.Migrations
                         .HasComment("Текст А.");
 
                     b.HasDiscriminator().HasValue("PostA");
+
+                    b.HasComment("Базовый тип в наследовании TPH.");
                 });
 
             modelBuilder.Entity("EFCore.Migrations.Toolkit.Tests.Models.Inheritance.PostB", b =>
@@ -161,6 +163,8 @@ namespace EFCore.Migrations.Toolkit.Tests.MigrationTests.PostgreSQL.Migrations
                         .HasComment("Текст Б.");
 
                     b.HasDiscriminator().HasValue("PostB");
+
+                    b.HasComment("Базовый тип в наследовании TPH.");
                 });
 #pragma warning restore 612, 618
         }
