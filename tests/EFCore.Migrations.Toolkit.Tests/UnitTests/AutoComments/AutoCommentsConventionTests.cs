@@ -134,6 +134,16 @@ public class AutoCommentsConventionTests
     }
 
     [Fact]
+    public void AutoComments_InheritedProperty_Should_SetColumnComment_FromBaseClassXml()
+    {
+        // Arrange
+        using var context = new AutoCommentsContext(BuildOptions());
+
+        // Act + Assert
+        Assert.Equal("Идентификатор.", GetColumnComment<Document>(context, nameof(EntityBase.Id)));
+    }
+
+    [Fact]
     public void AutoComments_Should_NotOverwrite_ManualTableComment()
     {
         // Arrange
@@ -171,7 +181,7 @@ public class AutoCommentsConventionTests
         // Assert
         Assert.Null(comment);
     }
-    
+
     [Fact]
     public void AutoComments_Should_SkipViewColumns_AndNotSetComments()
     {
@@ -197,7 +207,7 @@ public class AutoCommentsConventionTests
         // Assert
         Assert.Null(comment);
     }
-    
+
     [Fact]
     public void AutoComments_Should_SkipSqlQueryColumns_AndNotSetComments()
     {
@@ -247,5 +257,7 @@ internal sealed class AutoCommentsContext : DbContext
             builder.ToTable("Blogs", t => t.HasComment("Блог (ручной комментарий)"));
             builder.Property(b => b.Url).HasComment("URL (ручной комментарий)");
         });
+
+        modelBuilder.Entity<Document>(builder => { builder.HasKey(e => e.Id); });
     }
 }
