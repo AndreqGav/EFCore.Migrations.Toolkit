@@ -26,9 +26,18 @@ public class Blog
 /// </summary>
 public class BlogView
 {
+    /// <summary>
+    /// Идентификатор.
+    /// </summary>
     public int Id { get; set; }
 
+    /// <summary>
+    /// Наименование.
+    /// </summary>
     public string Name { get; set; }
 
+    /// <summary>
+    /// URL.
+    /// </summary>
     public string Url { get; set; }
 }

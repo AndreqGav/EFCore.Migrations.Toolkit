@@ -203,6 +203,11 @@ namespace EFCore.Migrations.Toolkit.Tests.MigrationTests.PostgreSQL.Migrations
                         .HasColumnType("text")
                         .HasComment("Текст А.");
 
+                    b.ToTable(t =>
+                        {
+                            t.HasComment("Базовый тип в наследовании TPH.");
+                        });
+
                     b.HasDiscriminator().HasValue("PostA");
                 });
 
@@ -213,6 +218,11 @@ namespace EFCore.Migrations.Toolkit.Tests.MigrationTests.PostgreSQL.Migrations
                     b.Property<string>("TextB")
                         .HasColumnType("text")
                         .HasComment("Текст Б.");
+
+                    b.ToTable(t =>
+                        {
+                            t.HasComment("Базовый тип в наследовании TPH.");
+                        });
 
                     b.HasDiscriminator().HasValue("PostB");
                 });
