@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <PackageId>EFCore.Migrations.CustomSql.SqlServer</PackageId>
+        <Title>Triggers.SqlServer</Title>
+        <Version>10.0.0</Version>
+        <Authors>AndreqGav</Authors>
+        <Product>EFCore.Migrations.Toolkit</Product>
+        <Description>Managing the creation of triggers in the database sqlServer through the EF migration mechanism.</Description>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageTags>entity framework core; entity-framework-core; ef core; ef-core; toolkits; ef-triggers; triggers; sql server</PackageTags>
+        <RepositoryUrl>https://github.com/AndreqGav/EFCore.Migrations.Toolkit</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <Copyright>Copyright (c) Андрей Гаврилов 2026</Copyright>
+        <PackageReleaseNotes>Creating Insert, Update, and Delete Triggers via DbContext</PackageReleaseNotes>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\EFCore.Migrations.Triggers\EFCore.Migrations.Triggers.csproj" />
+        <ProjectReference Include="..\..\..\abstractions\EFCore.Migrations.Abstractions\EFCore.Migrations.Abstractions.csproj" />
+    </ItemGroup>
+
+</Project>

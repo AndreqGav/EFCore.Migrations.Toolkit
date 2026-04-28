@@ -7,13 +7,11 @@
   </Folder>
   <Folder Name="/custom-sql/">
     <Project Path="src/custom-sql/EFCore.Migrations.CustomSql/EFCore.Migrations.CustomSql.csproj" />
+    <Project Path="src/custom-sql/EFCore.Migrations.Triggers/EFCore.Migrations.Triggers.csproj" />
   </Folder>
-  <Folder Name="/custom-triggers/">
-    <Project Path="src/custom-triggers/EFCore.Migrations.Triggers/EFCore.Migrations.Triggers.csproj" />
-  </Folder>
-  <Folder Name="/custom-triggers/providers/">
-    <Project Path="src/custom-triggers/providers/EFCore.Migrations.Triggers.PostgreSQL/EFCore.Migrations.Triggers.PostgreSQL.csproj" />
-    <Project Path="src/custom-triggers/providers/EFCore.Migrations.Triggers.SqlServer/EFCore.Migrations.Triggers.SqlServer.csproj" />
+  <Folder Name="/custom-sql/providers/">
+    <Project Path="src/custom-sql/providers/EFCore.Migrations.CustomSql.PostgreSQL/EFCore.Migrations.CustomSql.PostgreSQL.csproj" />
+    <Project Path="src/custom-sql/providers/EFCore.Migrations.CustomSql.SqlServer/EFCore.Migrations.CustomSql.SqlServer.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/EFCore.Migrations.Toolkit.Tests/EFCore.Migrations.Toolkit.Tests.csproj" />

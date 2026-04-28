@@ -16,8 +16,8 @@ public class SqlServerIntegrationTests : IDisposable
     public SqlServerIntegrationTests()
     {
         var optionsBuilder = new DbContextOptionsBuilder<SqlServerTestDbContext>()
-            .UseSqlServer(SqlServerTestDatabase.ConnectionString, o => o.UseTriggers())
-            .UseCustomSql();
+            .UseSqlServer(SqlServerTestDatabase.ConnectionString)
+            .UseCustomSql(o => o.UseSqlServer());
 
         _context = new SqlServerTestDbContext(optionsBuilder.Options);
         _context.Database.EnsureDeleted();

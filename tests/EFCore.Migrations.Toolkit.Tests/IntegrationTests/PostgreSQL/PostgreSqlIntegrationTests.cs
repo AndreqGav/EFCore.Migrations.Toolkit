@@ -19,9 +19,9 @@ public class PostgreSqlIntegrationTests : IDisposable
     public PostgreSqlIntegrationTests()
     {
         var optionsBuilder = new DbContextOptionsBuilder<PostgreSqlTestDbContext>()
-            .UseNpgsql(PostgreSqlDatabase.ConnectionString, o => o.UseTriggers())
+            .UseNpgsql(PostgreSqlDatabase.ConnectionString)
             .UseAutoComments()
-            .UseCustomSql();
+            .UseCustomSql(o => o.UseNpgsql());
 
         _context = new PostgreSqlTestDbContext(optionsBuilder.Options);
         _context.Database.EnsureDeleted();

@@ -19,8 +19,8 @@ public class PostgreSqlMigrationDbContext : DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         optionsBuilder
-            .UseNpgsql(PostgreSqlDatabase.ConnectionString, o => o.UseTriggers())
-            .UseCustomSql()
+            .UseNpgsql(PostgreSqlDatabase.ConnectionString)
+            .UseCustomSql(o => o.UseNpgsql())
             .UseAutoComments(options => options.AddEnumDescriptions());
     }
 

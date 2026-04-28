@@ -18,8 +18,8 @@ public class SqlServerMigrationDbContext : DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         optionsBuilder
-            .UseSqlServer(SqlServerTestDatabase.ConnectionString, o => o.UseTriggers())
-            .UseCustomSql();
+            .UseSqlServer(SqlServerTestDatabase.ConnectionString)
+            .UseCustomSql(o => o.UseSqlServer());
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

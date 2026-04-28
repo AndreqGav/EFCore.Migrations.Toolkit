@@ -17,7 +17,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\abstractions\EFCore.Migrations.Abstractions\EFCore.Migrations.Abstractions.csproj" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.0"/>
     </ItemGroup>
 
 </Project>

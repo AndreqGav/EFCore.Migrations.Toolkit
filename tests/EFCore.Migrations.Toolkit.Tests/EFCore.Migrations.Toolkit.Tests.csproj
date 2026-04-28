@@ -45,9 +45,9 @@
     <ItemGroup>
       <ProjectReference Include="..\..\src\auto-comments\EFCore.Migrations.AutoComments\EFCore.Migrations.AutoComments.csproj" />
       <ProjectReference Include="..\..\src\custom-sql\EFCore.Migrations.CustomSql\EFCore.Migrations.CustomSql.csproj" />
-      <ProjectReference Include="..\..\src\custom-triggers\EFCore.Migrations.Triggers\EFCore.Migrations.Triggers.csproj" />
-      <ProjectReference Include="..\..\src\custom-triggers\providers\EFCore.Migrations.Triggers.PostgreSQL\EFCore.Migrations.Triggers.PostgreSQL.csproj" />
-      <ProjectReference Include="..\..\src\custom-triggers\providers\EFCore.Migrations.Triggers.SqlServer\EFCore.Migrations.Triggers.SqlServer.csproj" />
+      <ProjectReference Include="..\..\src\custom-sql\EFCore.Migrations.Triggers\EFCore.Migrations.Triggers.csproj" />
+      <ProjectReference Include="..\..\src\custom-sql\providers\EFCore.Migrations.CustomSql.PostgreSQL\EFCore.Migrations.CustomSql.PostgreSQL.csproj" />
+      <ProjectReference Include="..\..\src\custom-sql\providers\EFCore.Migrations.CustomSql.SqlServer\EFCore.Migrations.CustomSql.SqlServer.csproj" />
     </ItemGroup>
 
     <ItemGroup>
