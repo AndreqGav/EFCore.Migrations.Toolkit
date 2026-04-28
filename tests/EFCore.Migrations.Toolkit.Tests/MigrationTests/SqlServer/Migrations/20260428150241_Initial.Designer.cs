@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EFCore.Migrations.Toolkit.Tests.MigrationTests.SqlServer.Migrations
 {
     [DbContext(typeof(SqlServerMigrationDbContext))]
-    [Migration("20260428120611_Initial")]
+    [Migration("20260428150241_Initial")]
     partial class Initial
     {
         /// <inheritdoc />

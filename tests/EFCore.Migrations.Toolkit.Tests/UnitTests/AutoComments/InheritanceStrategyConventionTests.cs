@@ -144,6 +144,21 @@ public class InheritanceStrategyConventionTests
     }
 
     [Fact]
+    public void AutoComments_Tpc_Should_SetBasePropertyComment_OnConcreteTypes()
+    {
+        // Arrange
+        using var context = new TpcAutoCommentsContext(BuildOptions<TpcAutoCommentsContext>());
+
+        // Act
+        var idA = GetProperty<BlogA>(context, nameof(BlogBase.Id));
+        var idB = GetProperty<BlogB>(context, nameof(BlogBase.Id));
+
+        // Assert
+        Assert.Equal("Идентификатор.", idA.GetComment());
+        Assert.Equal("Идентификатор.", idB.GetComment());
+    }
+
+    [Fact]
     public void AutoComments_Tpt_Should_SetComment_OnBaseType()
     {
         // Arrange
