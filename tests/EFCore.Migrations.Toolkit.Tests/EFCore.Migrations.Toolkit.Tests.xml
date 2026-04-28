@@ -77,6 +77,26 @@
             URL.
             </summary>
         </member>
+        <member name="T:EFCore.Migrations.Toolkit.Tests.Models.EntityBase">
+            <summary>
+            Базовая сущность.
+            </summary>
+        </member>
+        <member name="P:EFCore.Migrations.Toolkit.Tests.Models.EntityBase.Id">
+            <summary>
+            Идентификатор.
+            </summary>
+        </member>
+        <member name="T:EFCore.Migrations.Toolkit.Tests.Models.Document">
+            <summary>
+            Документ.
+            </summary>
+        </member>
+        <member name="P:EFCore.Migrations.Toolkit.Tests.Models.Document.Title">
+            <summary>
+            Заголовок.
+            </summary>
+        </member>
         <member name="T:EFCore.Migrations.Toolkit.Tests.Models.Inheritance.ArticleBase">
             <summary>
             Базовый тип в наследовании TPT.
@@ -342,6 +362,36 @@
             Домашний адрес.
             </summary>
         </member>
+        <member name="T:EFCore.Migrations.Toolkit.Tests.Models.Json.Product">
+            <summary>
+            Продукт.
+            </summary>
+        </member>
+        <member name="P:EFCore.Migrations.Toolkit.Tests.Models.Json.Product.Id">
+            <summary>
+            Идентификатор продукта.
+            </summary>
+        </member>
+        <member name="P:EFCore.Migrations.Toolkit.Tests.Models.Json.Product.Name">
+            <summary>
+            Название продукта.
+            </summary>
+        </member>
+        <member name="P:EFCore.Migrations.Toolkit.Tests.Models.Json.Product.Spec">
+            <summary>
+            Характеристика.
+            </summary>
+        </member>
+        <member name="T:EFCore.Migrations.Toolkit.Tests.Models.Json.ProductSpec">
+            <summary>
+            Характеристика продукта.
+            </summary>
+        </member>
+        <member name="P:EFCore.Migrations.Toolkit.Tests.Models.Json.ProductSpec.Name">
+            <summary>
+            Название характеристики.
+            </summary>
+        </member>
         <member name="T:EFCore.Migrations.Toolkit.Tests.Models.Json.Report">
             <summary>
             Отчёт.
@@ -595,6 +645,36 @@
         <member name="P:EFCore.Migrations.Toolkit.Tests.Models.Owned.ShipmentAddress.City">
             <summary>
             Город доставки.
+            </summary>
+        </member>
+        <member name="T:EFCore.Migrations.Toolkit.Tests.Models.Owned.Employee">
+            <summary>
+            Сотрудник.
+            </summary>
+        </member>
+        <member name="P:EFCore.Migrations.Toolkit.Tests.Models.Owned.Employee.Id">
+            <summary>
+            Идентификатор сотрудника.
+            </summary>
+        </member>
+        <member name="P:EFCore.Migrations.Toolkit.Tests.Models.Owned.Employee.Name">
+            <summary>
+            Имя сотрудника.
+            </summary>
+        </member>
+        <member name="P:EFCore.Migrations.Toolkit.Tests.Models.Owned.Employee.Department">
+            <summary>
+            Отдел.
+            </summary>
+        </member>
+        <member name="T:EFCore.Migrations.Toolkit.Tests.Models.Owned.Department">
+            <summary>
+            Отдел.
+            </summary>
+        </member>
+        <member name="P:EFCore.Migrations.Toolkit.Tests.Models.Owned.Department.Name">
+            <summary>
+            Название отдела.
             </summary>
         </member>
         <member name="T:EFCore.Migrations.Toolkit.Tests.Models.Owned.ShoppingCart">

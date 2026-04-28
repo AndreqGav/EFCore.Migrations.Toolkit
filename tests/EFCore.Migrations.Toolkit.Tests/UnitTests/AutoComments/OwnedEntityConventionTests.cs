@@ -22,6 +22,9 @@ public class OwnedEntityConventionTests
     private static string GetTableComment<TEntity>(DbContext context)
         => ModelAccessor.GetModel(context).FindEntityType(typeof(TEntity))!.GetComment();
 
+    private static string GetPropertyComment<TEntity>(DbContext context, string propertyName)
+        => ModelAccessor.GetModel(context).FindEntityType(typeof(TEntity))!.FindProperty(propertyName)!.GetComment();
+
     private static string GetOwnedEntityComment<TOwner, TOwned>(DbContext context, string navigationName)
     {
         var ownedType = ModelAccessor.GetModel(context)
@@ -190,6 +193,21 @@ public class OwnedEntityConventionTests
     }
 
     [Fact]
+    public void AutoComments_OwnerAndOwned_SamePropertyName_Should_SetDistinctComments()
+    {
+        // Arrange
+        using var context = new OwnerAndOwnedSharedPropertyNameContext(BuildOptions<OwnerAndOwnedSharedPropertyNameContext>());
+
+        // Act
+        var ownerNameComment = GetPropertyComment<Employee>(context, nameof(Employee.Name));
+        var ownedNameComment = GetOwnedPropertyComment<Department>(context, nameof(Department.Name));
+
+        // Assert
+        Assert.Equal("Имя сотрудника.", ownerNameComment);
+        Assert.Equal("Название отдела.", ownedNameComment);
+    }
+
+    [Fact]
     public void AutoComments_OwnedWithTable_ManualTableComment_Should_PreserveManualComment()
     {
         // Arrange
@@ -329,6 +347,25 @@ internal sealed class SimpleOwnedContext : DbContext
         {
             builder.HasKey(e => e.Id);
             builder.OwnsOne(w => w.Address);
+        });
+    }
+}
+
+internal sealed class OwnerAndOwnedSharedPropertyNameContext : DbContext
+{
+    public DbSet<Employee> Employees { get; set; }
+
+    public OwnerAndOwnedSharedPropertyNameContext(DbContextOptions<OwnerAndOwnedSharedPropertyNameContext> options)
+        : base(options)
+    {
+    }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Employee>(builder =>
+        {
+            builder.HasKey(e => e.Id);
+            builder.OwnsOne(e => e.Department);
         });
     }
 }

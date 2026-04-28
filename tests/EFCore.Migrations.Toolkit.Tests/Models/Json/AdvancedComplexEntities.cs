@@ -100,3 +100,35 @@ public class Person
     /// </summary>
     public PostalAddress HomeAddress { get; set; }
 }
+
+/// <summary>
+/// Продукт.
+/// </summary>
+public class Product
+{
+    /// <summary>
+    /// Идентификатор продукта.
+    /// </summary>
+    public int Id { get; set; }
+
+    /// <summary>
+    /// Название продукта.
+    /// </summary>
+    public string Name { get; set; }
+
+    /// <summary>
+    /// Характеристика.
+    /// </summary>
+    public ProductSpec Spec { get; set; }
+}
+
+/// <summary>
+/// Характеристика продукта.
+/// </summary>
+public class ProductSpec
+{
+    /// <summary>
+    /// Название характеристики.
+    /// </summary>
+    public string Name { get; set; }
+}

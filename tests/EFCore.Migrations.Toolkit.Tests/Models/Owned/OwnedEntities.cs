@@ -73,3 +73,35 @@ public class ShipmentAddress
     /// </summary>
     public string City { get; set; }
 }
+
+/// <summary>
+/// Сотрудник.
+/// </summary>
+public class Employee
+{
+    /// <summary>
+    /// Идентификатор сотрудника.
+    /// </summary>
+    public int Id { get; set; }
+
+    /// <summary>
+    /// Имя сотрудника.
+    /// </summary>
+    public string Name { get; set; }
+
+    /// <summary>
+    /// Отдел.
+    /// </summary>
+    public Department Department { get; set; }
+}
+
+/// <summary>
+/// Отдел.
+/// </summary>
+public class Department
+{
+    /// <summary>
+    /// Название отдела.
+    /// </summary>
+    public string Name { get; set; }
+}

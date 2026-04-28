@@ -186,13 +186,9 @@ internal class AutoCommentsConvention : IModelFinalizingConvention
 
         bool HasConfiguredComment(IConventionProperty property)
         {
-            var columnName = GetColumnName(property);
-            var entityType = property.DeclaringType;
-
             return allEntityTypes
-                .Where(x => HasSameTable(entityType, x))
                 .SelectMany(GetFlattenedProperties)
-                .Where(x => GetColumnName(x) == columnName)
+                .Where(x => HasSameColumn(property, x))
                 .Any(x => x.GetCommentConfigurationSource() is ConfigurationSource.Explicit or ConfigurationSource.DataAnnotation);
         }
 
@@ -209,27 +205,13 @@ internal class AutoCommentsConvention : IModelFinalizingConvention
         {
             if (comment == null) return;
 
-            var root = GetRootEntityType(entityProperty.DeclaringType);
+            var properties = allEntityTypes.SelectMany(GetFlattenedProperties)
+                .Where(x => HasSameColumn(entityProperty, x))
+                .ToList();
 
-            // Для TPH выставляем комментарий поля всей цепочке наследования.
-            if (IsTph(root))
+            foreach (var property in properties)
             {
-                var entityTypes = root.GetDerivedTypesInclusive().ToList();
-
-                var columnName = GetColumnName(entityProperty);
-
-                var properties = entityTypes.SelectMany(GetFlattenedProperties)
-                    .Where(x => GetColumnName(x) == columnName)
-                    .ToList();
-
-                foreach (var property in properties)
-                {
-                    property.SetComment(comment);
-                }
-            }
-            else
-            {
-                entityProperty.SetComment(comment);
+                property.SetComment(comment);
             }
         }
 
@@ -237,14 +219,8 @@ internal class AutoCommentsConvention : IModelFinalizingConvention
         {
             if (!IsTph(GetRootEntityType(entityProperty.DeclaringType))) return;
 
-            var root = GetRootEntityType(entityProperty.DeclaringType);
-
-            var entityTypes = root.GetDerivedTypesInclusive().ToList();
-
-            var columnName = GetColumnName(entityProperty);
-
-            var properties = entityTypes.SelectMany(GetFlattenedProperties)
-                .Where(x => GetColumnName(x) == columnName)
+            var properties = allEntityTypes.SelectMany(GetFlattenedProperties)
+                .Where(x => HasSameColumn(entityProperty, x))
                 .ToList();
 
             var comment = MergeComments(properties.Select(GetColumnComment));
@@ -257,17 +233,8 @@ internal class AutoCommentsConvention : IModelFinalizingConvention
 
         void MergeTableSplittingComments(IConventionProperty entityProperty)
         {
-            var columnName = GetColumnName(entityProperty);
-            var entityType = entityProperty.DeclaringType;
-
-            var entityTypes = allEntityTypes
-                .Where(x => HasSameTable(entityType, x))
-                .ToList();
-
-            if (entityTypes.Count == 1) return;
-
-            var properties = entityTypes.SelectMany(GetFlattenedProperties)
-                .Where(x => GetColumnName(x) == columnName)
+            var properties = allEntityTypes.SelectMany(GetFlattenedProperties)
+                .Where(x => HasSameColumn(entityProperty, x))
                 .ToList();
 
             var comment = MergeComments(properties.Select(GetColumnComment));
@@ -301,14 +268,37 @@ internal class AutoCommentsConvention : IModelFinalizingConvention
 
     private static bool HasSameTable(IConventionTypeBase entityTypeA, IConventionTypeBase entityTypeB)
     {
+        if (entityTypeA == entityTypeB) return true;
+
         if (entityTypeA is IConventionEntityType entityA && entityTypeB is IConventionEntityType entityB)
         {
-            if (entityA.GetTableName() is null) return false;
-            
-            return entityA.GetTableName() == entityB.GetTableName() && entityA.GetSchema() == entityB.GetSchema();
+            var storeObjectA = StoreObjectIdentifier.Create(entityA, StoreObjectType.Table);
+            var storeObjectB = StoreObjectIdentifier.Create(entityB, StoreObjectType.Table);
+
+            if (storeObjectA == null || storeObjectB == null)
+            {
+                return false;
+            }
+
+            return storeObjectA.Value == storeObjectB.Value;
         }
 
         return false;
+    }
+
+    private static bool HasSameColumn(IConventionProperty propertyA, IConventionProperty propertyB)
+    {
+        if (propertyA == propertyB) return true;
+
+        var storeObjectA = StoreObjectIdentifier.Create(propertyA.DeclaringEntityType, StoreObjectType.Table);
+        var storeObjectB = StoreObjectIdentifier.Create(propertyB.DeclaringEntityType, StoreObjectType.Table);
+
+        if (storeObjectA == null || storeObjectB == null || storeObjectA.Value != storeObjectB.Value)
+        {
+            return false;
+        }
+
+        return propertyA.GetColumnName(storeObjectA.Value) == propertyB.GetColumnName(storeObjectB.Value);
     }
 
     private IEnumerable<IConventionEntityType> GetTableEntityTypes(IEnumerable<IConventionEntityType> entityTypes)
@@ -395,19 +385,5 @@ internal class AutoCommentsConvention : IModelFinalizingConvention
         var derivedTypes = root.GetDerivedTypesInclusive().ToList();
 
         return derivedTypes.Any() && derivedTypes.All(d => d.GetTableName() == root.GetTableName());
-    }
-    
-    private static string GetColumnName(IConventionProperty property)
-    {
-        var entityType = property.DeclaringEntityType;
-
-        var tableName = entityType.GetTableName();
-        var schema = entityType.GetSchema();
-        
-        if (tableName is null) return null;
-        
-        var columnName = entityType.FindProperty(property.Name)?.GetColumnName(StoreObjectIdentifier.Table(tableName, schema));
-
-        return columnName;
     }
 }
