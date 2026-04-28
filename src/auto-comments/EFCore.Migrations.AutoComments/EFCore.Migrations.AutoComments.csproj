@@ -3,7 +3,7 @@
         <TargetFramework>net9.0</TargetFramework>
         <PackageId>EFCore.Migrations.AutoComments</PackageId>
         <Title>AutoComments</Title>
-        <Version>9.0.1</Version>
+        <Version>9.0.2</Version>
         <Authors>AndreqGav</Authors>
         <Product>EFCore.Migrations.Toolkit</Product>
         <Description>Automatic addition of comments for entities based on XML documentation file.</Description>
