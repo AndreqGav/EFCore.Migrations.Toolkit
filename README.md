@@ -1,4 +1,17 @@
-# EFCore.Migrations.Toolkit
+# EFCore.Migrations.Toolkit (Archived)
+
+⚠️ **Warning: This repository is no longer maintained and has been split into separate projects.** ⚠️
+
+To improve architecture, simplify maintenance, and enhance usability, the monolithic `EFCore.Migrations.Toolkit` package has been split into two independent, purpose-built projects. 
+
+Please use the new repositories:
+
+* 📝 **[EFCore.Migrations.AutoComments](https://github.com/AndreqGav/EFCore.Migrations.AutoComments)** — Automatically applies database comments to tables and columns based on XML documentation. Comments flow from `<summary>` tags directly into migrations.
+* 🛠 **[EFCore.Migrations.CustomSql](https://github.com/AndreqGav/EFCore.Migrations.CustomSql)** — EF Core extension for tracking custom SQL (views, functions, triggers, or any raw SQL) in the model and auto-generating `Up`/`Down` migration code.
+
+Thank you to everyone who used this package! All new features and bug fixes will now be released in the new repositories.
+
+---
 
 A collection of EF Core extension libraries for automatic database comments, custom SQL management, and trigger generation.
 
